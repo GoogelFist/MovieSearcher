@@ -1,4 +1,4 @@
-package com.github.googelfist.moviesearcher.data.model
+package com.github.googelfist.moviesearcher.data.datasourse.network.model
 
 data class MovieDTO(
     val completed: Boolean,
