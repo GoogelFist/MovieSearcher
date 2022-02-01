@@ -1,4 +1,4 @@
-package com.github.googelfist.moviesearcher.domain
+package com.github.googelfist.moviesearcher.domain.model
 
 data class MoviePreview(
     val kinopoiskId: Long,

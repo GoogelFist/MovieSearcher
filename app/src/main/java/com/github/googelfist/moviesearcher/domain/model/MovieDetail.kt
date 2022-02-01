@@ -1,4 +1,4 @@
-package com.github.googelfist.moviesearcher.domain
+package com.github.googelfist.moviesearcher.domain.model
 
 import javax.sql.StatementEvent
 
