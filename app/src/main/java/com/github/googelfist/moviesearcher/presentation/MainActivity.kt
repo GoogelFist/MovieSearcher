@@ -26,9 +26,7 @@ class MainActivity : AppCompatActivity() {
         component.inject(this)
 
         findViewById<MaterialButton>(R.id.b_load).setOnClickListener {
-            mainViewModel.onLoadTop250BestFilms(
-                PAGE
-            )
+            mainViewModel.onLoadFirstPageTop250BestFilms()
         }
     }
 
