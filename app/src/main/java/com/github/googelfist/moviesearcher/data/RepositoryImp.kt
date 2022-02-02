@@ -3,7 +3,7 @@ package com.github.googelfist.moviesearcher.data
 import com.github.googelfist.moviesearcher.data.datasourse.RemoteDataSource
 import com.github.googelfist.moviesearcher.data.datasourse.network.model.MovieDTO
 import com.github.googelfist.moviesearcher.domain.Repository
-import com.github.googelfist.moviesearcher.domain.mapper.MovieMapper
+import com.github.googelfist.moviesearcher.data.mapper.MovieMapper
 import com.github.googelfist.moviesearcher.domain.model.MoviePreviewContainer
 import javax.inject.Inject
 

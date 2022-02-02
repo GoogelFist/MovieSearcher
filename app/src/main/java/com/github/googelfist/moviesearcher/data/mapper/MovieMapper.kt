@@ -1,4 +1,4 @@
-package com.github.googelfist.moviesearcher.domain.mapper
+package com.github.googelfist.moviesearcher.data.mapper
 
 import com.github.googelfist.moviesearcher.data.datasourse.network.model.MovieDTO
 import com.github.googelfist.moviesearcher.domain.model.MoviePreview
