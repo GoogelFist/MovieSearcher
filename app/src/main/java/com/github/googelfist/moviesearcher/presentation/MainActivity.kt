@@ -1,7 +1,6 @@
 package com.github.googelfist.moviesearcher.presentation
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.github.googelfist.moviesearcher.R
@@ -24,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         component.inject(this)
 
-        findViewById<MaterialButton>(R.id.b_load).setOnClickListener { mainViewModel.loadTop250BestFilms(PAGE) }
+        findViewById<MaterialButton>(R.id.b_load).setOnClickListener { mainViewModel.onLoadTop250BestFilms(PAGE) }
     }
 
     companion object {

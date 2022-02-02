@@ -1,18 +1,18 @@
 package com.github.googelfist.moviesearcher.data.datasourse.network
 
 import com.github.googelfist.moviesearcher.data.datasourse.RemoteDataSource
-import com.github.googelfist.moviesearcher.data.datasourse.network.model.ResponseMovieDTO
+import com.github.googelfist.moviesearcher.data.datasourse.network.model.MovieDTO
 import retrofit2.Response
 import javax.inject.Inject
 
 class RetrofitDataSourceImpl @Inject constructor() : RemoteDataSource {
     // TODO:
-    override suspend fun loadTop250BestFilms(page: Int): Response<ResponseMovieDTO> {
+    override suspend fun loadTop250BestFilms(page: Int): Response<MovieDTO> {
         return RetrofitService.getInstance().getMovieList(authorization = AUTH_TOKEN, accept = CONTENT_TYPE , type = TYPE_TOP_250, page = page.toString())
     }
 
     // TODO:
-    override suspend fun loadTop100PopularFilms(page: Int): Response<ResponseMovieDTO> {
+    override suspend fun loadTop100PopularFilms(page: Int): Response<MovieDTO> {
         return RetrofitService.getInstance().getMovieList(authorization = AUTH_TOKEN,accept = CONTENT_TYPE , type = TYPE_TOP_100, page = page.toString())
     }
 
