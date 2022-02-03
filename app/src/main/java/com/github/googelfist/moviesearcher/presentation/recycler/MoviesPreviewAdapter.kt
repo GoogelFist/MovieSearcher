@@ -16,6 +16,9 @@ class MoviesPreviewAdapter : ListAdapter<MoviePreview, MoviesPreviewViewHolder>(
     override fun onBindViewHolder(holder: MoviesPreviewViewHolder, position: Int) {
         val movie = getItem(position)
         Picasso.get().load(movie.posterUrlPreview).into(holder.imagePreview)
-        holder.nameEn.text = movie.nameEn
+        holder.name.text = movie.nameEn ?: movie.nameRu
+        holder.genre.text = movie.genre
+        holder.country.text = movie.country
+        holder.year.text = movie.year
     }
 }

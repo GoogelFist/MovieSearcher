@@ -1,5 +1,7 @@
 package com.github.googelfist.moviesearcher.data.mapper
 
+import com.github.googelfist.moviesearcher.data.datasourse.network.model.Country
+import com.github.googelfist.moviesearcher.data.datasourse.network.model.Genre
 import com.github.googelfist.moviesearcher.data.datasourse.network.model.MovieDTO
 import com.github.googelfist.moviesearcher.domain.model.MoviePreview
 import javax.inject.Inject
@@ -17,12 +19,24 @@ class MovieMapper @Inject constructor(){
                     nameEn = it.nameEn,
                     posterUrlPreview = it.posterUrlPreview,
                     ratingKinopoisk = it.rating.toFloat(),
-                    year = it.year.toInt(),
-                    country = it.countries.toString(),
-                    genre = it.genres.toString()
+                    year = formatYear(it.year),
+                    country = formatCountries(it.countries),
+                    genre = formatGenres(it.genres)
                 )
             )
         }
         return result
+    }
+
+    private fun formatCountries(countries: List<Country>): String {
+        return countries.joinToString(separator = ", ", prefix = "Countries: ") {it.country}
+    }
+
+    private fun formatGenres(genres: List<Genre>): String {
+        return genres.joinToString(separator = ", ", prefix = "Genres: ") {it.genre}
+    }
+
+    private fun formatYear(year: String): String {
+        return "Year: $year"
     }
 }

@@ -6,7 +6,7 @@ data class MoviePreview(
     val nameEn: String?,
     val posterUrlPreview: String?,
     val ratingKinopoisk: Float?,
-    val year: Int?,
+    val year: String?,
     val country: String?,
     val genre: String?
 )
