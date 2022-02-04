@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.github.googelfist.moviesearcher.component
 import com.github.googelfist.moviesearcher.databinding.FragmentPreviewBinding
 import com.github.googelfist.moviesearcher.presentation.recycler.MoviesPreviewAdapter
@@ -18,6 +20,7 @@ class PreviewFragment : Fragment() {
     lateinit var mainViewModelFabric: MainViewModelFabric
 
     lateinit var moviesPreviewAdapter: MoviesPreviewAdapter
+    lateinit var linearLayoutManager: LinearLayoutManager
 
     private var _binding: FragmentPreviewBinding? = null
     private val binding: FragmentPreviewBinding
@@ -47,9 +50,9 @@ class PreviewFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupRecyclerView()
-
         mainViewModel.movieList.observe(viewLifecycleOwner) { moviesPreviewAdapter.submitList(it) }
+
+        setupRecyclerView()
 
         binding.bLoad.setOnClickListener {
             mainViewModel.onLoadFirstPageTop250BestFilms()
@@ -59,8 +62,19 @@ class PreviewFragment : Fragment() {
     private fun setupRecyclerView() {
         val rvMoviesPreview = binding.rvMoviesPreview
 
+        linearLayoutManager = LinearLayoutManager(requireContext())
+        rvMoviesPreview.layoutManager = linearLayoutManager
+
         moviesPreviewAdapter = MoviesPreviewAdapter()
         rvMoviesPreview.adapter = moviesPreviewAdapter
+
+        rvMoviesPreview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (linearLayoutManager.findLastCompletelyVisibleItemPosition() == moviesPreviewAdapter.itemCount - PRELOAD_POSITION) {
+                    mainViewModel.onLoadNextPageTop250BestFilms()
+                }
+            }
+        })
     }
 
     override fun onDestroy() {
@@ -69,6 +83,8 @@ class PreviewFragment : Fragment() {
     }
 
     companion object {
+        private const val PRELOAD_POSITION = 3
+
         fun getNewInstance(): PreviewFragment {
             return PreviewFragment()
         }

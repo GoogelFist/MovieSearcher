@@ -4,6 +4,7 @@ import com.github.googelfist.moviesearcher.data.datasourse.RemoteDataSource
 import com.github.googelfist.moviesearcher.data.datasourse.network.model.MovieDTO
 import com.github.googelfist.moviesearcher.data.mapper.MovieMapper
 import com.github.googelfist.moviesearcher.domain.Repository
+import com.github.googelfist.moviesearcher.domain.model.MoviePreview
 import com.github.googelfist.moviesearcher.domain.model.MoviePreviewContainer
 import javax.inject.Inject
 
@@ -15,36 +16,38 @@ class RepositoryImp @Inject constructor(
     private var pageNumber: Int = PAGE_COUNT_ONE
     private var top250PageCount: Int = PAGE_COUNT_ZERO
 
-    override suspend fun loadFirstPageTop250BestFilms(): MoviePreviewContainer {
-        return loadTop250BestFilms(PAGE_COUNT_ONE)
-    }
+    private var previewMovies = mutableListOf<MoviePreview>()
 
+    override suspend fun loadFirstPageTop250BestFilms(): MoviePreviewContainer {
+        resetPageNumber()
+        val movies = loadTop250BestFilms(pageNumber).previewMovies
+        previewMovies = movies as MutableList<MoviePreview>
+        return loadTop250BestFilms(pageNumber)
+    }
 
     override suspend fun loadNextPageTop250BestFilms(): MoviePreviewContainer {
-        return if (pageNumber < top250PageCount) {
+        if (pageNumber < top250PageCount) {
             increasePageNumber()
-            loadTop100PopularFilms(pageNumber)
-        } else {
-            // TODO: need optimize this logic
-            loadFirstPageTop250BestFilms()
-        }
-    }
+            val movies = loadTop250BestFilms(pageNumber).previewMovies
+            previewMovies.addAll(movies)
 
-    override suspend fun loadTop100PopularFilms(page: Int): MoviePreviewContainer {
-//        return remoteDataSource.loadTop100PopularFilms(page)
-        TODO()
+            val movieContainer = loadTop250BestFilms(pageNumber)
+            return MoviePreviewContainer(movieContainer.errorMessage, previewMovies)
+        }
+        val movieContainer = loadTop250BestFilms(pageNumber)
+        return MoviePreviewContainer(movieContainer.errorMessage, previewMovies)
     }
 
     private suspend fun loadTop250BestFilms(page: Int): MoviePreviewContainer {
-        val response = remoteDataSource.loadTop250BestFilms(page)
-        if (response.isSuccessful) {
-            if (response.body() == null) {
+        val request = remoteDataSource.loadTop250BestFilms(page)
+        if (request.isSuccessful) {
+            if (request.body() == null) {
                 return MoviePreviewContainer(
                     errorMessage = ERROR_MESSAGE,
                     previewMovies = emptyList()
                 )
             }
-            val dtoList = response.body()
+            val dtoList = request.body()
             val previewMovieList = mapper.mapMovieDTOtoMoviePreviewList(dtoList as MovieDTO)
             top250PageCount = dtoList.pagesCount
             return MoviePreviewContainer(
@@ -53,9 +56,13 @@ class RepositoryImp @Inject constructor(
             )
         }
         return MoviePreviewContainer(
-            errorMessage = "$NOT_SUCCESSFUL_ERROR_MESSAGE ${response.message()}",
+            errorMessage = "$NOT_SUCCESSFUL_ERROR_MESSAGE ${request.message()}",
             previewMovies = emptyList()
         )
+    }
+
+    private fun resetPageNumber() {
+        pageNumber = PAGE_COUNT_ONE
     }
 
     private fun increasePageNumber() {

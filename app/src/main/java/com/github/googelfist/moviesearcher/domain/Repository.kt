@@ -6,6 +6,4 @@ interface Repository {
     suspend fun loadFirstPageTop250BestFilms(): MoviePreviewContainer
 
     suspend fun loadNextPageTop250BestFilms(): MoviePreviewContainer
-
-    suspend fun loadTop100PopularFilms(page: Int): MoviePreviewContainer
 }

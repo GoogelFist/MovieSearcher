@@ -6,6 +6,7 @@ import com.github.googelfist.moviesearcher.data.datasourse.network.RetrofitDataS
 import com.github.googelfist.moviesearcher.domain.Repository
 import dagger.Binds
 import dagger.Module
+import javax.inject.Singleton
 
 @Module
 interface DateModule {
@@ -14,5 +15,6 @@ interface DateModule {
     fun bindRemoteDataSource(impl: RetrofitDataSourceImpl): RemoteDataSource
 
     @Binds
+    @Singleton
     fun bindRepository(impl: RepositoryImp): Repository
 }
