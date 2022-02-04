@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -51,11 +52,14 @@ class PreviewFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         mainViewModel.movieList.observe(viewLifecycleOwner) { moviesPreviewAdapter.submitList(it) }
+        mainViewModel.onLoadFirstPageTop250BestFilms()
+
+        mainViewModel.loading.observe(viewLifecycleOwner) {binding.pbFragmentPreview.isVisible = it}
 
         setupRecyclerView()
 
-        binding.bLoad.setOnClickListener {
-            mainViewModel.onLoadFirstPageTop250BestFilms()
+        binding.fabLoad.setOnClickListener {
+            linearLayoutManager.scrollToPosition(SCROLL_TO_POSITION_VALUE)
         }
     }
 
@@ -84,6 +88,7 @@ class PreviewFragment : Fragment() {
 
     companion object {
         private const val PRELOAD_POSITION = 3
+        private const val SCROLL_TO_POSITION_VALUE = 0
 
         fun getNewInstance(): PreviewFragment {
             return PreviewFragment()

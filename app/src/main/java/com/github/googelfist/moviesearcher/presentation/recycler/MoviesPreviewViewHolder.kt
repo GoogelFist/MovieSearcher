@@ -14,12 +14,20 @@ class MoviesPreviewViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     private val genre: TextView = view.findViewById(R.id.tv_genres)
     private val country: TextView = view.findViewById(R.id.tv_countries)
     private val year: TextView = view.findViewById(R.id.tv_year)
+    private val number: TextView = view.findViewById(R.id.tv_number)
 
-    fun bind(movie: MoviePreview) {
+    fun bind(movie: MoviePreview, position: Int) {
         Picasso.get().load(movie.posterUrlPreview).into(this.imagePreview)
         name.text = movie.nameEn ?: movie.nameRu
         genre.text = movie.genre
         country.text = movie.country
         year.text = movie.year
+
+        val numberOfPosition = position + ONE_VALUE
+        number.text = "$numberOfPosition"
+    }
+
+    companion object {
+        private const val ONE_VALUE = 1
     }
 }

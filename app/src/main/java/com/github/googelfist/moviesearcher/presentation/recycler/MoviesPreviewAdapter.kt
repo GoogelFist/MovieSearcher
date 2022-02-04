@@ -14,6 +14,6 @@ class MoviesPreviewAdapter : ListAdapter<MoviePreview, MoviesPreviewViewHolder>(
 
     override fun onBindViewHolder(holder: MoviesPreviewViewHolder, position: Int) {
         val movie = getItem(position)
-        holder.bind(movie)
+        holder.bind(movie, position)
     }
 }
