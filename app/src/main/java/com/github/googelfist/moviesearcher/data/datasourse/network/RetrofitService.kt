@@ -14,7 +14,7 @@ interface RetrofitService {
         @Header(HEADER_CONTENT_TYPE) contentType: String,
         @Query(TYPE) type: String,
         @Query(PAGE) page: String
-    ): Response<MovieDTO>
+    ): MovieDTO
 
     companion object {
         private const val HEADER_API_KEY = "X-API-KEY"

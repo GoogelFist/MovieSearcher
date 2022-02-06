@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.googelfist.moviesearcher.component
 import com.github.googelfist.moviesearcher.databinding.FragmentPreviewBinding
 import com.github.googelfist.moviesearcher.presentation.recycler.MoviesPreviewAdapter
+import com.google.android.material.snackbar.Snackbar
 import javax.inject.Inject
 
 class PreviewFragment : Fragment() {
@@ -52,9 +53,14 @@ class PreviewFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         mainViewModel.movieList.observe(viewLifecycleOwner) { moviesPreviewAdapter.submitList(it) }
+        mainViewModel.loading.observe(viewLifecycleOwner) {
+            binding.pbFragmentPreview.isVisible = it
+        }
+        mainViewModel.errorMessage.observe(viewLifecycleOwner) {
+            it?.let { Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show() }
+        }
         mainViewModel.onLoadFirstPageTop250BestFilms()
 
-        mainViewModel.loading.observe(viewLifecycleOwner) {binding.pbFragmentPreview.isVisible = it}
 
         setupRecyclerView()
 
@@ -74,8 +80,13 @@ class PreviewFragment : Fragment() {
 
         rvMoviesPreview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (linearLayoutManager.findLastCompletelyVisibleItemPosition() == moviesPreviewAdapter.itemCount - PRELOAD_POSITION) {
+                val preloadPosition = moviesPreviewAdapter.itemCount - PRELOAD_POSITION
+
+                if (linearLayoutManager.findLastCompletelyVisibleItemPosition() == preloadPosition) {
                     mainViewModel.onLoadNextPageTop250BestFilms()
+
+                    val lastPosition = moviesPreviewAdapter.itemCount - ONE_VALUE
+                    moviesPreviewAdapter.notifyItemRangeChanged(lastPosition, ITEM_COUNT)
                 }
             }
         })
@@ -88,7 +99,9 @@ class PreviewFragment : Fragment() {
 
     companion object {
         private const val PRELOAD_POSITION = 3
+        private const val ITEM_COUNT = 20
         private const val SCROLL_TO_POSITION_VALUE = 0
+        private const val ONE_VALUE = 1
 
         fun getNewInstance(): PreviewFragment {
             return PreviewFragment()

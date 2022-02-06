@@ -6,7 +6,7 @@ import com.github.googelfist.moviesearcher.data.datasourse.network.model.MovieDT
 import com.github.googelfist.moviesearcher.domain.model.MoviePreview
 import javax.inject.Inject
 
-class MovieMapper @Inject constructor(){
+class MovieMapper @Inject constructor() {
 
     fun mapMovieDTOtoMoviePreviewList(dto: MovieDTO): List<MoviePreview> {
         val films = dto.films
@@ -28,11 +28,11 @@ class MovieMapper @Inject constructor(){
     }
 
     private fun formatCountries(countries: List<Country>): String {
-        return countries.joinToString(separator = ", ", prefix = "Countries: ") {it.country}
+        return countries.joinToString(separator = ", ", prefix = "Countries: ") { it.country }
     }
 
     private fun formatGenres(genres: List<Genre>): String {
-        return genres.joinToString(separator = ", ", prefix = "Genres: ") {it.genre}
+        return genres.joinToString(separator = ", ", prefix = "Genres: ") { it.genre }
     }
 
     private fun formatYear(year: String): String {

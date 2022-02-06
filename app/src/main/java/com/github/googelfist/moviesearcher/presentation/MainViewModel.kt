@@ -4,9 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.googelfist.moviesearcher.data.LoadTop250BestFilmsError
 import com.github.googelfist.moviesearcher.domain.LoadFirstPageTop250UseCase
 import com.github.googelfist.moviesearcher.domain.LoadNextPageTop250UseCase
 import com.github.googelfist.moviesearcher.domain.model.MoviePreview
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class MainViewModel(
@@ -15,35 +17,37 @@ class MainViewModel(
 ) : ViewModel() {
 
     private var _errorMessage = MutableLiveData<String>()
-    val errorMessage: LiveData<String> = _errorMessage
+    val errorMessage: LiveData<String>
+        get() = _errorMessage
 
     private var _movieList = MutableLiveData<List<MoviePreview>>()
-    val movieList: LiveData<List<MoviePreview>> = _movieList
+    val movieList: LiveData<List<MoviePreview>>
+        get() = _movieList
 
     private var _loading = MutableLiveData<Boolean>()
-    val loading: LiveData<Boolean> = _loading
+    val loading: LiveData<Boolean>
+        get() = _loading
 
 
     fun onLoadFirstPageTop250BestFilms() {
-        viewModelScope.launch {
-            val moviesContainer = loadFirstPageTop250UseCase()
-            if (moviesContainer.previewMovies.isNotEmpty()) {
-                _movieList.postValue(moviesContainer.previewMovies)
-                _loading.value = false
-            } else {
-                onError(moviesContainer.errorMessage)
-            }
+        launchLoadMovies {
+            loadFirstPageTop250UseCase()
         }
     }
 
     fun onLoadNextPageTop250BestFilms() {
-        viewModelScope.launch {
-            val moviesContainer = loadNextPageTop250UseCase()
-            if (moviesContainer.previewMovies.isNotEmpty()) {
-                _movieList.postValue(moviesContainer.previewMovies)
+        launchLoadMovies {
+            loadNextPageTop250UseCase()
+        }
+    }
+
+    private fun launchLoadMovies(block: suspend () -> List<MoviePreview>) : Job {
+        return viewModelScope.launch {
+            try {
+                _movieList.value = block()
                 _loading.value = false
-            } else {
-                onError(moviesContainer.errorMessage)
+            } catch (error: LoadTop250BestFilmsError) {
+                error.message?.let { onError(it) }
             }
         }
     }

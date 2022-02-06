@@ -6,9 +6,11 @@ import androidx.recyclerview.widget.ListAdapter
 import com.github.googelfist.moviesearcher.R
 import com.github.googelfist.moviesearcher.domain.model.MoviePreview
 
-class MoviesPreviewAdapter : ListAdapter<MoviePreview, MoviesPreviewViewHolder>(MoviePreviewDiffCallback()) {
+class MoviesPreviewAdapter :
+    ListAdapter<MoviePreview, MoviesPreviewViewHolder>(MoviePreviewDiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MoviesPreviewViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.movie_preview_cell, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.movie_preview_cell, parent, false)
         return MoviesPreviewViewHolder(view)
     }
 
@@ -16,4 +18,5 @@ class MoviesPreviewAdapter : ListAdapter<MoviePreview, MoviesPreviewViewHolder>(
         val movie = getItem(position)
         holder.bind(movie, position)
     }
+
 }

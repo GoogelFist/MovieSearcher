@@ -1,9 +1,10 @@
 package com.github.googelfist.moviesearcher.domain
 
-import com.github.googelfist.moviesearcher.domain.model.MoviePreviewContainer
+import androidx.lifecycle.LiveData
+import com.github.googelfist.moviesearcher.domain.model.MoviePreview
 
 interface Repository {
-    suspend fun loadFirstPageTop250BestFilms(): MoviePreviewContainer
+    suspend fun loadFirstPageTop250BestFilms(): List<MoviePreview>
 
-    suspend fun loadNextPageTop250BestFilms(): MoviePreviewContainer
+    suspend fun loadNextPageTop250BestFilms(): List<MoviePreview>
 }

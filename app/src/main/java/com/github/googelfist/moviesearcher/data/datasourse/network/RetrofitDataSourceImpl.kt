@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class RetrofitDataSourceImpl @Inject constructor(private val retrofitService: RetrofitService) :
     RemoteDataSource {
-    override suspend fun loadTop250BestFilms(page: Int): Response<MovieDTO> {
+    override suspend fun loadTop250BestFilms(page: Int): MovieDTO {
         return retrofitService.getMovieList(
             authToken = AUTH_TOKEN,
             contentType = CONTENT_TYPE,
