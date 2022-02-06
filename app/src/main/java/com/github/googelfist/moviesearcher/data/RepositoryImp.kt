@@ -1,6 +1,5 @@
 package com.github.googelfist.moviesearcher.data
 
-import androidx.lifecycle.MutableLiveData
 import com.github.googelfist.moviesearcher.data.datasourse.RemoteDataSource
 import com.github.googelfist.moviesearcher.data.mapper.MovieMapper
 import com.github.googelfist.moviesearcher.domain.Repository
@@ -49,12 +48,6 @@ class RepositoryImp @Inject constructor(
 
     private fun increasePageNumber() {
         pageNumber++
-    }
-
-    private fun <T> MutableLiveData<List<T>>.updateListValue(list: List<T>) {
-        val value = this.value as MutableList<T>
-        value.addAll(list)
-        this.value = value
     }
 
     companion object {
