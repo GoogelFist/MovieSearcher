@@ -1,8 +1,10 @@
 package com.github.googelfist.moviesearcher.data
 
+import android.util.Log
 import com.github.googelfist.moviesearcher.data.datasourse.RemoteDataSource
 import com.github.googelfist.moviesearcher.data.mapper.MovieMapper
 import com.github.googelfist.moviesearcher.domain.Repository
+import com.github.googelfist.moviesearcher.domain.model.MovieDetail
 import com.github.googelfist.moviesearcher.domain.model.MoviePreview
 import javax.inject.Inject
 
@@ -32,6 +34,16 @@ class RepositoryImp @Inject constructor(
         return previewMovies
     }
 
+    override suspend fun loadMovieDetail(id: Int): MovieDetail {
+        try {
+            val result = remoteDataSource.loadMovieDetail(id)
+            return mapper.mapMovieDTOtoMovieDetail(result)
+        } catch (error: Throwable) {
+            Log.e("error", error.message.toString())
+            throw LoadMovieDetailError("Unable to load movie detail", error)
+        }
+    }
+
     private suspend fun loadTop250BestFilms(page: Int): List<MoviePreview> {
         try {
             val result = remoteDataSource.loadTop250BestFilms(page)
@@ -57,3 +69,4 @@ class RepositoryImp @Inject constructor(
 }
 
 class LoadTop250BestFilmsError(message: String, cause: Throwable) : Throwable(message, cause)
+class LoadMovieDetailError(message: String, cause: Throwable) : Throwable(message, cause)

@@ -2,26 +2,43 @@ package com.github.googelfist.moviesearcher.data.mapper
 
 import com.github.googelfist.moviesearcher.data.datasourse.network.model.Country
 import com.github.googelfist.moviesearcher.data.datasourse.network.model.Genre
-import com.github.googelfist.moviesearcher.data.datasourse.network.model.MovieDTO
+import com.github.googelfist.moviesearcher.data.datasourse.network.model.detail.MovieDetailDTO
+import com.github.googelfist.moviesearcher.data.datasourse.network.model.preview.MoviePreviewDTO
+import com.github.googelfist.moviesearcher.domain.model.MovieDetail
 import com.github.googelfist.moviesearcher.domain.model.MoviePreview
 import javax.inject.Inject
 
 class MovieMapper @Inject constructor() {
 
-    fun mapMovieDTOtoMoviePreviewList(dto: MovieDTO): List<MoviePreview> {
+    fun mapMovieDTOtoMoviePreviewList(dto: MoviePreviewDTO): List<MoviePreview> {
         val films = dto.films
         val result = mutableListOf<MoviePreview>()
         films.forEach {
             result.add(
                 MoviePreview(
-                    kinopoiskId = it.filmId.toLong(),
+                    kinopoiskId = it.filmId,
                     nameRu = it.nameRu,
-                    nameEn = it.nameEn,
-                    posterUrlPreview = it.posterUrlPreview
+                    nameEn = it.nameEn  ?: it.nameRu,
+                    posterUrl = it.posterUrl
                 )
             )
         }
         return result
+    }
+
+    fun mapMovieDTOtoMovieDetail(dto: MovieDetailDTO): MovieDetail {
+        return MovieDetail(
+            kinopoiskId = dto.kinopoiskId,
+            nameRu = dto.nameRu,
+            nameEn = (dto.nameEn).let { dto.nameEn as String? } ?: dto.nameRu,
+            nameOriginal = dto.nameOriginal ?: dto.nameRu,
+            posterUrl = dto.posterUrl,
+            ratingKinopoisk = dto.ratingKinopoisk.toString(),
+            year = formatYear(dto.year),
+            description = dto.description,
+            country = formatCountries(dto.countries),
+            genre = formatGenres(dto.genres)
+        )
     }
 
     private fun formatCountries(countries: List<Country>): String {
@@ -32,7 +49,7 @@ class MovieMapper @Inject constructor() {
         return genres.joinToString(separator = ", ", prefix = "Genres: ") { it.genre }
     }
 
-    private fun formatYear(year: String): String {
+    private fun formatYear(year: Int): String {
         return "Year: $year"
     }
 }

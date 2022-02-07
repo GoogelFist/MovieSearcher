@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.googelfist.moviesearcher.R
 import com.github.googelfist.moviesearcher.component
 import com.github.googelfist.moviesearcher.databinding.FragmentPreviewBinding
 import com.github.googelfist.moviesearcher.presentation.recycler.MoviesPreviewAdapter
@@ -59,9 +60,25 @@ class PreviewFragment : Fragment() {
         mainViewModel.errorMessage.observe(viewLifecycleOwner) {
             it?.let { Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show() }
         }
-        mainViewModel.onLoadFirstPageTop250BestFilms()
+        if (savedInstanceState == null) {
+            mainViewModel.onLoadFirstPageTop250BestFilms()
+        }
 
         setupRecyclerView()
+
+        moviesPreviewAdapter.onMoviePreviewClickListener = {
+            moviesPreviewAdapter.getMoviePreviewId = { kinopoiskId ->
+                requireActivity().supportFragmentManager
+                    .beginTransaction()
+                    .addToBackStack(null)
+                    .setReorderingAllowed(true)
+                    .replace(
+                        R.id.fragment_container,
+                        DetailFragment.getNewInstanceWithId(kinopoiskId)
+                    )
+                    .commit()
+            }
+        }
 
         binding.fabLoad.setOnClickListener {
             linearLayoutManager.scrollToPosition(SCROLL_TO_POSITION_VALUE)
@@ -85,7 +102,10 @@ class PreviewFragment : Fragment() {
                     mainViewModel.onLoadNextPageTop250BestFilms()
 
                     val lastPosition = moviesPreviewAdapter.itemCount - ONE_VALUE
-                    moviesPreviewAdapter.notifyItemRangeChanged(lastPosition, ITEM_COUNT)
+
+                    recyclerView.post {
+                        moviesPreviewAdapter.notifyItemRangeChanged(lastPosition, ITEM_COUNT)
+                    }
                 }
             }
         })
