@@ -61,7 +61,6 @@ class PreviewFragment : Fragment() {
         }
         mainViewModel.onLoadFirstPageTop250BestFilms()
 
-
         setupRecyclerView()
 
         binding.fabLoad.setOnClickListener {

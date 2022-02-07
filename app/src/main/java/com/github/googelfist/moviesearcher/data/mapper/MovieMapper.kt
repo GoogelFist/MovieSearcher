@@ -17,10 +17,7 @@ class MovieMapper @Inject constructor() {
                     kinopoiskId = it.filmId.toLong(),
                     nameRu = it.nameRu,
                     nameEn = it.nameEn,
-                    posterUrlPreview = it.posterUrlPreview,
-                    year = formatYear(it.year),
-                    country = formatCountries(it.countries),
-                    genre = formatGenres(it.genres)
+                    posterUrlPreview = it.posterUrlPreview
                 )
             )
         }
