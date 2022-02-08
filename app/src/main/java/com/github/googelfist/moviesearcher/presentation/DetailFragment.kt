@@ -18,8 +18,6 @@ class DetailFragment : Fragment() {
     @Inject
     lateinit var mainViewModelFabric: MainViewModelFabric
 
-    private var movieId = DEFAULT_MOVIE_ID
-
     private var _binding: FragmentItemMovieBinding? = null
     private val binding: FragmentItemMovieBinding
         get() = _binding!!
@@ -29,11 +27,6 @@ class DetailFragment : Fragment() {
     override fun onAttach(context: Context) {
         requireActivity().component.inject(this)
         super.onAttach(context)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        parseParams()
-        super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(
@@ -52,8 +45,6 @@ class DetailFragment : Fragment() {
             it?.let { Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show() }
         }
 
-        mainViewModel.onLoadMovieDetail(movieId)
-
         mainViewModel.movieDetail.observe(viewLifecycleOwner) {
             Picasso.get().load(it.posterUrl).into(binding.ivPreviewMovieImage)
             binding.tvDetailCountry.text = it.country
@@ -70,23 +61,10 @@ class DetailFragment : Fragment() {
         _binding = null
     }
 
-    private fun parseParams() {
-        val args = requireArguments()
-        if (args.containsKey(MOVIE_ID)) {
-            movieId = args.getInt(MOVIE_ID)
-        }
-    }
-
     companion object {
-        private const val MOVIE_ID = "movie id"
-        private const val DEFAULT_MOVIE_ID = 301
 
-        fun getNewInstanceWithId(id: Int): DetailFragment {
-            return DetailFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(MOVIE_ID, id)
-                }
-            }
+        fun getNewInstance(): DetailFragment {
+            return DetailFragment()
         }
     }
 }

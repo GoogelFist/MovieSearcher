@@ -3,7 +3,6 @@ package com.github.googelfist.moviesearcher.presentation
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.github.googelfist.moviesearcher.R
-import com.github.googelfist.moviesearcher.component
 
 class MainActivity : AppCompatActivity() {
 

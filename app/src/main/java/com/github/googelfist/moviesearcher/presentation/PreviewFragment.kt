@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.commit
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.googelfist.moviesearcher.R
@@ -57,20 +58,26 @@ class PreviewFragment : Fragment() {
         mainViewModel.errorMessage.observe(viewLifecycleOwner) {
             it?.let { Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show() }
         }
-        if (savedInstanceState == null) {
-            mainViewModel.onLoadPageTop250BestFilms()
-        }
+
+        mainViewModel.onLoadPageTop250BestFilms()
 
         moviesPreviewAdapter.onMoviePreviewClickListener = { _, kinopoiskId ->
-            requireActivity().supportFragmentManager
-                .beginTransaction()
-                .addToBackStack(null)
-                .setReorderingAllowed(true)
-                .replace(
-                    R.id.fragment_container,
-                    DetailFragment.getNewInstanceWithId(kinopoiskId)
+            mainViewModel.onLoadMovieDetail(kinopoiskId)
+
+            requireActivity().supportFragmentManager.commit {
+                setCustomAnimations(
+                    R.anim.slide_in,
+                    R.anim.fade_out,
+                    R.anim.fade_in,
+                    R.anim.slide_out
                 )
-                .commit()
+                replace(
+                    R.id.fragment_container,
+                    DetailFragment.getNewInstance()
+                )
+                setReorderingAllowed(true)
+                addToBackStack(null)
+            }
         }
 
         binding.fabLoad.setOnClickListener {

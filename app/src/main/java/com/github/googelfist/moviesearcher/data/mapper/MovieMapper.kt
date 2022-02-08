@@ -18,7 +18,7 @@ class MovieMapper @Inject constructor() {
                 MoviePreview(
                     kinopoiskId = it.filmId,
                     nameRu = it.nameRu,
-                    nameEn = it.nameEn  ?: it.nameRu,
+                    nameEn = it.nameEn ?: it.nameRu,
                     posterUrl = it.posterUrl
                 )
             )
