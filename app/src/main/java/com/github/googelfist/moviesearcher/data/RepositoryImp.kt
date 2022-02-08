@@ -16,12 +16,13 @@ class RepositoryImp @Inject constructor(
     private var pageNumber: Int = PAGE_COUNT_ONE
     private var top250PageCount: Int = PAGE_COUNT_ZERO
 
-    private val previewMovies = mutableListOf<MoviePreview>()
+    private var previewMovies = mutableListOf<MoviePreview>()
 
-    override suspend fun loadFirstPageTop250BestFilms() : List<MoviePreview> {
-        resetPageNumber()
-        val movies = loadTop250BestFilms(pageNumber)
-        previewMovies.addAll(movies)
+    override suspend fun loadFirstPageTop250BestFilms(): List<MoviePreview> {
+        if (pageNumber == PAGE_COUNT_ONE) {
+            val movies = loadTop250BestFilms(pageNumber)
+            previewMovies = movies as MutableList<MoviePreview>
+        }
         return previewMovies
     }
 
@@ -52,10 +53,6 @@ class RepositoryImp @Inject constructor(
         } catch (error: Throwable) {
             throw LoadTop250BestFilmsError("Unable to load top 250 best films", error)
         }
-    }
-
-    private fun resetPageNumber() {
-        pageNumber = PAGE_COUNT_ONE
     }
 
     private fun increasePageNumber() {

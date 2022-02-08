@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.googelfist.moviesearcher.R
@@ -29,12 +29,7 @@ class PreviewFragment : Fragment() {
     private val binding: FragmentPreviewBinding
         get() = _binding!!
 
-    private val mainViewModel by lazy {
-        ViewModelProvider(
-            this,
-            mainViewModelFabric
-        )[MainViewModel::class.java]
-    }
+    private val mainViewModel by activityViewModels<MainViewModel> { mainViewModelFabric }
 
     override fun onAttach(context: Context) {
         requireActivity().component.inject(this)
@@ -53,31 +48,29 @@ class PreviewFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupRecyclerView()
+
         mainViewModel.movieList.observe(viewLifecycleOwner) { moviesPreviewAdapter.submitList(it) }
         mainViewModel.loading.observe(viewLifecycleOwner) {
             binding.pbFragmentPreview.isVisible = it
         }
         mainViewModel.errorMessage.observe(viewLifecycleOwner) {
-            it?.let { Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show() }
+            it?.let { Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show() }
         }
         if (savedInstanceState == null) {
             mainViewModel.onLoadFirstPageTop250BestFilms()
         }
 
-        setupRecyclerView()
-
-        moviesPreviewAdapter.onMoviePreviewClickListener = {
-            moviesPreviewAdapter.getMoviePreviewId = { kinopoiskId ->
-                requireActivity().supportFragmentManager
-                    .beginTransaction()
-                    .addToBackStack(null)
-                    .setReorderingAllowed(true)
-                    .replace(
-                        R.id.fragment_container,
-                        DetailFragment.getNewInstanceWithId(kinopoiskId)
-                    )
-                    .commit()
-            }
+        moviesPreviewAdapter.onMoviePreviewClickListener = { _, kinopoiskId ->
+            requireActivity().supportFragmentManager
+                .beginTransaction()
+                .addToBackStack(null)
+                .setReorderingAllowed(true)
+                .replace(
+                    R.id.fragment_container,
+                    DetailFragment.getNewInstanceWithId(kinopoiskId)
+                )
+                .commit()
         }
 
         binding.fabLoad.setOnClickListener {
@@ -88,7 +81,7 @@ class PreviewFragment : Fragment() {
     private fun setupRecyclerView() {
         val rvMoviesPreview = binding.rvMoviesPreview
 
-        linearLayoutManager = LinearLayoutManager(requireContext())
+        linearLayoutManager = LinearLayoutManager(requireActivity())
         rvMoviesPreview.layoutManager = linearLayoutManager
 
         moviesPreviewAdapter = MoviesPreviewAdapter()

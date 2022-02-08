@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import com.github.googelfist.moviesearcher.component
 import com.github.googelfist.moviesearcher.databinding.FragmentItemMovieBinding
 import com.google.android.material.snackbar.Snackbar
@@ -24,12 +24,7 @@ class DetailFragment : Fragment() {
     private val binding: FragmentItemMovieBinding
         get() = _binding!!
 
-    private val mainViewModel by lazy {
-        ViewModelProvider(
-            this,
-            mainViewModelFabric
-        )[MainViewModel::class.java]
-    }
+    private val mainViewModel by activityViewModels<MainViewModel> { mainViewModelFabric }
 
     override fun onAttach(context: Context) {
         requireActivity().component.inject(this)
@@ -56,6 +51,7 @@ class DetailFragment : Fragment() {
         mainViewModel.errorMessage.observe(viewLifecycleOwner) {
             it?.let { Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show() }
         }
+
         mainViewModel.onLoadMovieDetail(movieId)
 
         mainViewModel.movieDetail.observe(viewLifecycleOwner) {

@@ -10,8 +10,7 @@ import com.github.googelfist.moviesearcher.domain.model.MoviePreview
 class MoviesPreviewAdapter :
     ListAdapter<MoviePreview, MoviesPreviewViewHolder>(MoviePreviewDiffCallback()) {
 
-    lateinit var onMoviePreviewClickListener: ((ImageView) -> Unit)
-    lateinit var getMoviePreviewId: ((Int) -> Unit)
+    lateinit var onMoviePreviewClickListener: ((ImageView, Int) -> Unit)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MoviesPreviewViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -23,8 +22,7 @@ class MoviesPreviewAdapter :
         val movie = getItem(position)
         holder.bind(movie, position)
         holder.imagePreview.setOnClickListener {
-            onMoviePreviewClickListener.invoke(it as ImageView)
-            getMoviePreviewId.invoke(movie.kinopoiskId)
+            onMoviePreviewClickListener.invoke(it as ImageView, movie.kinopoiskId)
         }
     }
 }
