@@ -60,12 +60,12 @@ class DetailFragment : Fragment() {
 
         mainViewModel.movieDetail.observe(viewLifecycleOwner) {
             Picasso.get().load(it.posterUrl).into(binding.ivPreviewMovieImage)
-            binding.tvPreviewCountry.text = it.country
+            binding.tvDetailCountry.text = it.country
             binding.tvDetailMovieName.text = it.nameOriginal
-            binding.tvPreviewGenre.text = it.genre
-            binding.tvYear.text = it.year
-            binding.tvRating.text = it.ratingKinopoisk
+            binding.tvDetailGenre.text = it.genre
+            binding.tvDetailYear.text = it.year
             binding.tvDetailDescription.text = it.description
+            binding.includeDetailFragmentRating.tvDetailRating.text = it.ratingKinopoisk
         }
     }
 
@@ -84,10 +84,6 @@ class DetailFragment : Fragment() {
     companion object {
         private const val MOVIE_ID = "movie id"
         private const val DEFAULT_MOVIE_ID = 301
-
-        fun getNewInstance(): DetailFragment {
-            return DetailFragment()
-        }
 
         fun getNewInstanceWithId(id: Int): DetailFragment {
             return DetailFragment().apply {

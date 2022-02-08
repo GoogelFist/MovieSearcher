@@ -34,7 +34,7 @@ class MovieMapper @Inject constructor() {
             nameOriginal = dto.nameOriginal ?: dto.nameRu,
             posterUrl = dto.posterUrl,
             ratingKinopoisk = dto.ratingKinopoisk.toString(),
-            year = formatYear(dto.year),
+            year = dto.year.toString(),
             description = dto.description,
             country = formatCountries(dto.countries),
             genre = formatGenres(dto.genres)
@@ -42,14 +42,10 @@ class MovieMapper @Inject constructor() {
     }
 
     private fun formatCountries(countries: List<Country>): String {
-        return countries.joinToString(separator = ", ", prefix = "Countries: ") { it.country }
+        return countries.joinToString(separator = ", ") { it.country }
     }
 
     private fun formatGenres(genres: List<Genre>): String {
-        return genres.joinToString(separator = ", ", prefix = "Genres: ") { it.genre }
-    }
-
-    private fun formatYear(year: Int): String {
-        return "Year: $year"
+        return genres.joinToString(separator = ", ") { it.genre }
     }
 }
