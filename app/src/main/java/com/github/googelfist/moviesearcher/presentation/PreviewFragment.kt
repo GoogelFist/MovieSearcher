@@ -58,7 +58,7 @@ class PreviewFragment : Fragment() {
             it?.let { Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show() }
         }
         if (savedInstanceState == null) {
-            mainViewModel.onLoadFirstPageTop250BestFilms()
+            mainViewModel.onLoadPageTop250BestFilms()
         }
 
         moviesPreviewAdapter.onMoviePreviewClickListener = { _, kinopoiskId ->
@@ -92,7 +92,7 @@ class PreviewFragment : Fragment() {
                 val preloadPosition = moviesPreviewAdapter.itemCount - PRELOAD_POSITION
 
                 if (linearLayoutManager.findLastCompletelyVisibleItemPosition() == preloadPosition) {
-                    mainViewModel.onLoadNextPageTop250BestFilms()
+                    mainViewModel.onLoadPageTop250BestFilms()
 
                     val lastPosition = moviesPreviewAdapter.itemCount - ONE_VALUE
 

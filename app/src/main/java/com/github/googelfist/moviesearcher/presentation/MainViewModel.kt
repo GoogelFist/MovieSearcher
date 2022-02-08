@@ -6,17 +6,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.googelfist.moviesearcher.data.LoadMovieDetailError
 import com.github.googelfist.moviesearcher.data.LoadTop250BestFilmsError
-import com.github.googelfist.moviesearcher.domain.LoadFirstPageTop250UseCase
 import com.github.googelfist.moviesearcher.domain.LoadMovieDetailUseCase
-import com.github.googelfist.moviesearcher.domain.LoadNextPageTop250UseCase
+import com.github.googelfist.moviesearcher.domain.LoadPageTop250UseCase
 import com.github.googelfist.moviesearcher.domain.model.MovieDetail
 import com.github.googelfist.moviesearcher.domain.model.MoviePreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class MainViewModel(
-    private val loadFirstPageTop250UseCase: LoadFirstPageTop250UseCase,
-    private val loadNextPageTop250UseCase: LoadNextPageTop250UseCase,
+    private val loadFirstPageTop250BestFilmsUseCase: LoadPageTop250UseCase,
     private val loadMovieDetailUseCase: LoadMovieDetailUseCase
 ) : ViewModel() {
 
@@ -37,15 +35,9 @@ class MainViewModel(
         get() = _loading
 
 
-    fun onLoadFirstPageTop250BestFilms() {
+    fun onLoadPageTop250BestFilms() {
         launchLoadMovies {
-            loadFirstPageTop250UseCase()
-        }
-    }
-
-    fun onLoadNextPageTop250BestFilms() {
-        launchLoadMovies {
-            loadNextPageTop250UseCase()
+            loadFirstPageTop250BestFilmsUseCase()
         }
     }
 

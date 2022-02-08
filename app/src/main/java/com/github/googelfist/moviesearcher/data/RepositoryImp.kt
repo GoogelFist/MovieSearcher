@@ -1,6 +1,5 @@
 package com.github.googelfist.moviesearcher.data
 
-import android.util.Log
 import com.github.googelfist.moviesearcher.data.datasourse.RemoteDataSource
 import com.github.googelfist.moviesearcher.data.mapper.MovieMapper
 import com.github.googelfist.moviesearcher.domain.Repository
@@ -18,19 +17,18 @@ class RepositoryImp @Inject constructor(
 
     private var previewMovies = mutableListOf<MoviePreview>()
 
-    override suspend fun loadFirstPageTop250BestFilms(): List<MoviePreview> {
-        if (pageNumber == PAGE_COUNT_ONE) {
-            val movies = loadTop250BestFilms(pageNumber)
-            previewMovies = movies as MutableList<MoviePreview>
-        }
-        return previewMovies
-    }
-
-    override suspend fun loadNextPageTop250BestFilms() : List<MoviePreview> {
-        if (pageNumber < top250PageCount) {
-            increasePageNumber()
-            val movies = loadTop250BestFilms(pageNumber)
-            previewMovies.addAll(movies)
+    override suspend fun loadPageTop250BestFilms(): List<MoviePreview> {
+        when {
+            pageNumber == PAGE_COUNT_ONE -> {
+                val movies = loadTop250BestFilms(PAGE_COUNT_ONE)
+                previewMovies = movies as MutableList<MoviePreview>
+                increasePageNumber()
+            }
+            pageNumber < top250PageCount -> {
+                val movies = loadTop250BestFilms(pageNumber)
+                previewMovies.addAll(movies)
+                increasePageNumber()
+            }
         }
         return previewMovies
     }
@@ -40,7 +38,6 @@ class RepositoryImp @Inject constructor(
             val result = remoteDataSource.loadMovieDetail(id)
             return mapper.mapMovieDTOtoMovieDetail(result)
         } catch (error: Throwable) {
-            Log.e("error", error.message.toString())
             throw LoadMovieDetailError("Unable to load movie detail", error)
         }
     }
