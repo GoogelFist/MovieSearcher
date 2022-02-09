@@ -1,6 +1,8 @@
 package com.github.googelfist.moviesearcher.di
 
+import com.github.googelfist.moviesearcher.presentation.DetailFragment
 import com.github.googelfist.moviesearcher.presentation.MainActivity
+import com.github.googelfist.moviesearcher.presentation.PreviewFragment
 import dagger.Component
 import javax.inject.Singleton
 
@@ -8,5 +10,7 @@ import javax.inject.Singleton
 @Singleton
 interface ApplicationComponent {
 
-    fun inject(activity: MainActivity)
+    fun inject(previewFragment: PreviewFragment)
+
+    fun inject(detailFragment: DetailFragment)
 }

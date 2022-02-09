@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Movie Searcher</string>
+    <string name="movie_preview_image_description">It is movie preview image</string>
+    <string name="button_to_up_content_description">Button to up</string>
+    <string name="fragment_preview_header">Top 250 best films</string>
+    <string name="tv_genres_fragment_item">Genres:</string>
+    <string name="tv_countries_fragment_item">Countries:</string>
+    <string name="tv_detail_movie_year">Year:</string>
+    <string name="tv_detail_movie_rating">Rating:</string>
 </resources>

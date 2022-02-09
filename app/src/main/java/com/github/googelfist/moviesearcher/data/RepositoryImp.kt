@@ -1,10 +1,10 @@
 package com.github.googelfist.moviesearcher.data
 
 import com.github.googelfist.moviesearcher.data.datasourse.RemoteDataSource
-import com.github.googelfist.moviesearcher.data.datasourse.network.model.MovieDTO
 import com.github.googelfist.moviesearcher.data.mapper.MovieMapper
 import com.github.googelfist.moviesearcher.domain.Repository
-import com.github.googelfist.moviesearcher.domain.model.MoviePreviewContainer
+import com.github.googelfist.moviesearcher.domain.model.MovieDetail
+import com.github.googelfist.moviesearcher.domain.model.MoviePreview
 import javax.inject.Inject
 
 class RepositoryImp @Inject constructor(
@@ -15,47 +15,41 @@ class RepositoryImp @Inject constructor(
     private var pageNumber: Int = PAGE_COUNT_ONE
     private var top250PageCount: Int = PAGE_COUNT_ZERO
 
-    override suspend fun loadFirstPageTop250BestFilms(): MoviePreviewContainer {
-        return loadTop250BestFilms(PAGE_COUNT_ONE)
-    }
+    private var previewMovies = mutableListOf<MoviePreview>()
 
-
-    override suspend fun loadNextPageTop250BestFilms(): MoviePreviewContainer {
-        return if (pageNumber < top250PageCount) {
-            increasePageNumber()
-            loadTop100PopularFilms(pageNumber)
-        } else {
-            // TODO: need optimize this logic
-            loadFirstPageTop250BestFilms()
-        }
-    }
-
-    override suspend fun loadTop100PopularFilms(page: Int): MoviePreviewContainer {
-//        return remoteDataSource.loadTop100PopularFilms(page)
-        TODO()
-    }
-
-    private suspend fun loadTop250BestFilms(page: Int): MoviePreviewContainer {
-        val response = remoteDataSource.loadTop250BestFilms(page)
-        if (response.isSuccessful) {
-            if (response.body() == null) {
-                return MoviePreviewContainer(
-                    errorMessage = ERROR_MESSAGE,
-                    previewMovies = emptyList()
-                )
+    override suspend fun loadPageTop250BestFilms(): List<MoviePreview> {
+        when {
+            pageNumber == PAGE_COUNT_ONE -> {
+                val movies = loadTop250BestFilms(PAGE_COUNT_ONE)
+                previewMovies = movies as MutableList<MoviePreview>
+                increasePageNumber()
             }
-            val dtoList = response.body()
-            val previewMovieList = mapper.mapMovieDTOtoMoviePreviewList(dtoList as MovieDTO)
-            top250PageCount = dtoList.pagesCount
-            return MoviePreviewContainer(
-                errorMessage = EMPTY_STRING,
-                previewMovies = previewMovieList
-            )
+            pageNumber < top250PageCount -> {
+                val movies = loadTop250BestFilms(pageNumber)
+                previewMovies.addAll(movies)
+                increasePageNumber()
+            }
         }
-        return MoviePreviewContainer(
-            errorMessage = "$NOT_SUCCESSFUL_ERROR_MESSAGE ${response.message()}",
-            previewMovies = emptyList()
-        )
+        return previewMovies
+    }
+
+    override suspend fun loadMovieDetail(id: Int): MovieDetail {
+        try {
+            val result = remoteDataSource.loadMovieDetail(id)
+            return mapper.mapMovieDTOtoMovieDetail(result)
+        } catch (error: Throwable) {
+            throw LoadMovieDetailError("Unable to load movie detail", error)
+        }
+    }
+
+    private suspend fun loadTop250BestFilms(page: Int): List<MoviePreview> {
+        try {
+            val result = remoteDataSource.loadTop250BestFilms(page)
+            top250PageCount = result.pagesCount
+            return mapper.mapMovieDTOtoMoviePreviewList(result)
+        } catch (error: Throwable) {
+            throw LoadTop250BestFilmsError("Unable to load top 250 best films", error)
+        }
     }
 
     private fun increasePageNumber() {
@@ -63,11 +57,10 @@ class RepositoryImp @Inject constructor(
     }
 
     companion object {
-        private const val EMPTY_STRING = ""
-        private const val ERROR_MESSAGE = "Response body is null"
-        private const val NOT_SUCCESSFUL_ERROR_MESSAGE = "Not successful error:"
         private const val PAGE_COUNT_ZERO = 0
         private const val PAGE_COUNT_ONE = 1
-
     }
 }
+
+class LoadTop250BestFilmsError(message: String, cause: Throwable) : Throwable(message, cause)
+class LoadMovieDetailError(message: String, cause: Throwable) : Throwable(message, cause)

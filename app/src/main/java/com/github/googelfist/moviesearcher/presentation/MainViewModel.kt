@@ -1,44 +1,71 @@
 package com.github.googelfist.moviesearcher.presentation
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.github.googelfist.moviesearcher.domain.LoadFirstPageTop250UseCase
+import androidx.lifecycle.viewModelScope
+import com.github.googelfist.moviesearcher.data.LoadMovieDetailError
+import com.github.googelfist.moviesearcher.data.LoadTop250BestFilmsError
+import com.github.googelfist.moviesearcher.domain.LoadMovieDetailUseCase
+import com.github.googelfist.moviesearcher.domain.LoadPageTop250UseCase
+import com.github.googelfist.moviesearcher.domain.model.MovieDetail
 import com.github.googelfist.moviesearcher.domain.model.MoviePreview
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class MainViewModel(private val loadFirstPageTop250UseCase: LoadFirstPageTop250UseCase) : ViewModel() {
+class MainViewModel(
+    private val loadFirstPageTop250BestFilmsUseCase: LoadPageTop250UseCase,
+    private val loadMovieDetailUseCase: LoadMovieDetailUseCase
+) : ViewModel() {
 
-    val errorMessage = MutableLiveData<String>()
-    val movieList = MutableLiveData<List<MoviePreview>>()
-    var job: Job? = null
+    private var _errorMessage = MutableLiveData<String>()
+    val errorMessage: LiveData<String>
+        get() = _errorMessage
 
-    val loading = MutableLiveData<Boolean>()
+    private var _movieList = MutableLiveData<List<MoviePreview>>()
+    val movieList: LiveData<List<MoviePreview>>
+        get() = _movieList
 
-    fun onLoadFirstPageTop250BestFilms() {
-        job = CoroutineScope(Dispatchers.IO).launch {
-            val moviesContainer = loadFirstPageTop250UseCase()
-            withContext(Dispatchers.Main) {
-                if (moviesContainer.previewMovies.isNotEmpty()) {
-                    movieList.postValue(moviesContainer.previewMovies)
-                    loading.value = false
-                } else {
-                    onError(moviesContainer.errorMessage)
-                }
+    private var _movieDetail = MutableLiveData<MovieDetail>()
+    val movieDetail: LiveData<MovieDetail>
+        get() = _movieDetail
+
+    private var _loading = MutableLiveData<Boolean>()
+    val loading: LiveData<Boolean>
+        get() = _loading
+
+
+    fun onLoadPageTop250BestFilms() {
+        launchLoadMovies {
+            loadFirstPageTop250BestFilmsUseCase()
+        }
+    }
+
+    fun onLoadMovieDetail(id: Int) {
+        viewModelScope.launch {
+            try {
+                val movieDetail = loadMovieDetailUseCase.invoke(id)
+                _movieDetail.value = movieDetail
+                _loading.value = false
+            } catch (error: LoadMovieDetailError) {
+                error.message?.let { onError(it) }
+            }
+        }
+    }
+
+    private fun launchLoadMovies(block: suspend () -> List<MoviePreview>) : Job {
+        return viewModelScope.launch {
+            try {
+                _movieList.value = block()
+                _loading.value = false
+            } catch (error: LoadTop250BestFilmsError) {
+                error.message?.let { onError(it) }
             }
         }
     }
 
     private fun onError(message: String) {
-        errorMessage.value = message
-        loading.value = false
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        job?.cancel()
+        _errorMessage.value = message
+        _loading.value = false
     }
 }

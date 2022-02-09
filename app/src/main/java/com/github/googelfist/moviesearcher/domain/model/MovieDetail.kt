@@ -1,16 +1,14 @@
 package com.github.googelfist.moviesearcher.domain.model
 
-import javax.sql.StatementEvent
-
 data class MovieDetail(
-    val kinopoiskId: Long,
+    val kinopoiskId: Int,
     val nameRu: String,
     val nameEn: String,
+    val nameOriginal: String,
     val posterUrl: String,
-    val ratingKinopoisk: Float,
-    val webUrl: String,
-    val year: Int,
+    val ratingKinopoisk: String,
+    val year: String,
     val description: String,
     val country: String,
-    val genre: String
+    val genre: String?
 )
