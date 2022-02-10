@@ -46,13 +46,13 @@ class MovieItemFragment : Fragment() {
         }
 
         mainViewModel.movieItem.observe(viewLifecycleOwner) {
-            Picasso.get().load(it.posterUrl).into(binding.ivPreviewMovieImage)
-            binding.tvDetailCountry.text = it.country
-            binding.tvDetailMovieName.text = it.nameOriginal
-            binding.tvDetailGenre.text = it.genre
-            binding.tvDetailYear.text = it.year
-            binding.tvDetailDescription.text = it.description
-            binding.includeDetailFragmentRating.tvDetailRating.text = it.ratingKinopoisk
+            Picasso.get().load(it.posterUrl).into(binding.ivItemMovieImage)
+            binding.tvItemCountry.text = it.country
+            binding.tvItemMovieName.text = it.nameOriginal
+            binding.tvItemGenre.text = it.genre
+            binding.tvItemYear.text = it.year
+            binding.tvItemDescription.text = it.description
+            binding.includeItemFragmentRating.tvItemRating.text = it.ratingKinopoisk
         }
     }
 

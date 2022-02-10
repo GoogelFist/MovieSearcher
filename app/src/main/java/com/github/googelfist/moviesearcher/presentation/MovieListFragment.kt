@@ -11,7 +11,7 @@ import androidx.fragment.app.commit
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.googelfist.moviesearcher.R
 import com.github.googelfist.moviesearcher.component
-import com.github.googelfist.moviesearcher.databinding.FragmentPreviewBinding
+import com.github.googelfist.moviesearcher.databinding.FragmentListBinding
 import com.github.googelfist.moviesearcher.presentation.recycler.MoviesPreviewAdapter
 import com.google.android.material.snackbar.Snackbar
 import javax.inject.Inject
@@ -24,8 +24,8 @@ class MovieListFragment : Fragment() {
     lateinit var moviesPreviewAdapter: MoviesPreviewAdapter
     lateinit var linearLayoutManager: LinearLayoutManager
 
-    private var _binding: FragmentPreviewBinding? = null
-    private val binding: FragmentPreviewBinding
+    private var _binding: FragmentListBinding? = null
+    private val binding: FragmentListBinding
         get() = _binding!!
 
     private val mainViewModel by activityViewModels<MainViewModel> { mainViewModelFabric }
@@ -40,7 +40,7 @@ class MovieListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPreviewBinding.inflate(inflater, container, false)
+        _binding = FragmentListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -60,7 +60,7 @@ class MovieListFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        val rvMoviesPreview = binding.rvMoviesPreview
+        val rvMoviesPreview = binding.rvMoviesList
 
         linearLayoutManager = LinearLayoutManager(requireActivity())
         rvMoviesPreview.layoutManager = linearLayoutManager
@@ -79,7 +79,7 @@ class MovieListFragment : Fragment() {
 
         mainViewModel.loading.observe(viewLifecycleOwner) { value ->
             value.let { show ->
-                binding.pbFragmentPreview.visibility = if (show) View.VISIBLE else View.GONE
+                binding.pbFragmentList.visibility = if (show) View.VISIBLE else View.GONE
             }
         }
 
@@ -116,7 +116,7 @@ class MovieListFragment : Fragment() {
     }
 
     private fun setupButtons() {
-        binding.fabLoad.setOnClickListener {
+        binding.fabUpList.setOnClickListener {
             linearLayoutManager.scrollToPosition(SCROLL_TO_POSITION_VALUE)
         }
     }

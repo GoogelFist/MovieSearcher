@@ -15,7 +15,7 @@ class MoviesPreviewAdapter :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MoviesPreviewViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.movie_preview_cell, parent, false)
+            .inflate(R.layout.movie_list_cell, parent, false)
         return MoviesPreviewViewHolder(view)
     }
 

@@ -19,7 +19,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-                android:id="@+id/tv_preview_number"
+                android:id="@+id/tv_list_number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
@@ -31,7 +31,7 @@
                 tools:text="1" />
 
         <TextView
-                android:id="@+id/tv_preview_movie_name"
+                android:id="@+id/tv_list_movie_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -39,12 +39,12 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_preview_number"
+                app:layout_constraintTop_toBottomOf="@+id/tv_list_number"
                 tools:text="Avengers" />
 
 
         <androidx.cardview.widget.CardView
-                android:id="@+id/cv_preview_movie"
+                android:id="@+id/cv_list_movie"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginTop="16dp"
@@ -53,13 +53,13 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_preview_movie_name">
+                app:layout_constraintTop_toBottomOf="@+id/tv_list_movie_name">
 
             <ImageView
-                    android:id="@+id/iv_preview_movie_image"
+                    android:id="@+id/iv_item_movie_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/movie_preview_image_description" />
+                    android:contentDescription="@string/movie_list_image_description" />
 
         </androidx.cardview.widget.CardView>
 
