@@ -6,16 +6,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.googelfist.moviesearcher.data.RemoteLoadMovieItemError
 import com.github.googelfist.moviesearcher.data.RemoteLoadMovieListError
-import com.github.googelfist.moviesearcher.domain.LoadMovieDetailUseCase
-import com.github.googelfist.moviesearcher.domain.LoadPageTop250UseCase
+import com.github.googelfist.moviesearcher.domain.LoadMovieItemUseCase
+import com.github.googelfist.moviesearcher.domain.LoadMovieListUseCase
 import com.github.googelfist.moviesearcher.domain.model.MovieItem
 import com.github.googelfist.moviesearcher.domain.model.MovieList
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class MainViewModel(
-    private val loadFirstPageTop250BestFilmsUseCase: LoadPageTop250UseCase,
-    private val loadMovieDetailUseCase: LoadMovieDetailUseCase
+    private val loadMovieListUseCase: LoadMovieListUseCase,
+    private val loadMovieItemUseCase: LoadMovieItemUseCase
 ) : ViewModel() {
 
     private var _errorMessage = MutableLiveData<String>()
@@ -35,17 +35,17 @@ class MainViewModel(
         get() = _loading
 
 
-    fun onLoadPageTop250BestFilms() {
-        launchLoadMovies {
-            loadFirstPageTop250BestFilmsUseCase()
+    fun onLoadMovieList() {
+        launchLoadMovieList {
+            loadMovieListUseCase()
         }
     }
 
-    fun onLoadMovieDetail(id: Int) {
+    fun onLoadMovieItem(id: Int) {
         viewModelScope.launch {
             try {
                 _loading.value = true
-                val movieDetail = loadMovieDetailUseCase.invoke(id)
+                val movieDetail = loadMovieItemUseCase.invoke(id)
                 _movieDetail.value = movieDetail
             } catch (error: RemoteLoadMovieItemError) {
                 _errorMessage.value = error.message
@@ -55,7 +55,7 @@ class MainViewModel(
         }
     }
 
-    private fun launchLoadMovies(block: suspend () -> List<MovieList>): Job {
+    private fun launchLoadMovieList(block: suspend () -> List<MovieList>): Job {
         return viewModelScope.launch {
             try {
                 _loading.value = true

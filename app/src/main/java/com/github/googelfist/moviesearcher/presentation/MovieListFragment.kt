@@ -69,7 +69,7 @@ class MovieListFragment : Fragment() {
         rvMoviesPreview.adapter = moviesPreviewAdapter
 
         moviesPreviewAdapter.onScrolledToBottom = {
-            mainViewModel.onLoadPageTop250BestFilms()
+            mainViewModel.onLoadMovieList()
         }
     }
 
@@ -90,13 +90,13 @@ class MovieListFragment : Fragment() {
 
     private fun movieListInit() {
         if (mainViewModel.movieList.value == null) {
-            mainViewModel.onLoadPageTop250BestFilms()
+            mainViewModel.onLoadMovieList()
         }
     }
 
     private fun setMoviePreviewOnClickListener() {
         moviesPreviewAdapter.onMoviePreviewClickListener = { _, kinopoiskId ->
-            mainViewModel.onLoadMovieDetail(kinopoiskId)
+            mainViewModel.onLoadMovieItem(kinopoiskId)
 
             requireActivity().supportFragmentManager.commit {
                 setCustomAnimations(
