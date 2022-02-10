@@ -1,5 +1,8 @@
 package com.github.googelfist.moviesearcher.data.mapper
 
+import com.github.googelfist.moviesearcher.data.datasourse.local.model.MovieDetailDAO
+import com.github.googelfist.moviesearcher.data.datasourse.local.model.MoviePreviewDAO
+import com.github.googelfist.moviesearcher.data.datasourse.local.model.MoviePreviewListDAO
 import com.github.googelfist.moviesearcher.data.datasourse.network.model.Country
 import com.github.googelfist.moviesearcher.data.datasourse.network.model.Genre
 import com.github.googelfist.moviesearcher.data.datasourse.network.model.detail.MovieDetailDTO
@@ -26,6 +29,23 @@ class MovieMapper @Inject constructor() {
         return result
     }
 
+    fun mapMoviePreviewToMoviePreviewListDAO(
+        page: Int,
+        moviePreview: List<MoviePreview>
+    ): MoviePreviewListDAO {
+
+        val moviePreviewListDAO = moviePreview.map {
+            MoviePreviewDAO(
+                kinopoiskId = it.kinopoiskId,
+                nameRu = it.nameRu,
+                nameEn = it.nameEn,
+                posterUrl = it.posterUrl
+            )
+        }.toList()
+
+        return MoviePreviewListDAO(page, moviePreviewListDAO)
+    }
+
     fun mapMovieDTOtoMovieDetail(dto: MovieDetailDTO): MovieDetail {
         return MovieDetail(
             kinopoiskId = dto.kinopoiskId,
@@ -38,6 +58,21 @@ class MovieMapper @Inject constructor() {
             description = dto.description,
             country = formatCountries(dto.countries),
             genre = formatGenres(dto.genres)
+        )
+    }
+
+    fun mapMovieDetailToMovieDAO(movieDetail: MovieDetail): MovieDetailDAO {
+        return MovieDetailDAO(
+            kinopoiskId = movieDetail.kinopoiskId,
+            nameRu = movieDetail.nameRu,
+            nameEn = movieDetail.nameEn,
+            nameOriginal = movieDetail.nameOriginal,
+            posterUrl = movieDetail.posterUrl,
+            ratingKinopoisk = movieDetail.ratingKinopoisk,
+            year = movieDetail.year,
+            description = movieDetail.description,
+            country = movieDetail.country,
+            genre = movieDetail.genre
         )
     }
 
