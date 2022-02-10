@@ -5,8 +5,8 @@ import com.github.googelfist.moviesearcher.data.datasourse.local.model.MoviePrev
 import com.github.googelfist.moviesearcher.data.datasourse.local.model.MoviePreviewListDAO
 import com.github.googelfist.moviesearcher.data.datasourse.network.model.Country
 import com.github.googelfist.moviesearcher.data.datasourse.network.model.Genre
-import com.github.googelfist.moviesearcher.data.datasourse.network.model.detail.MovieItemDTO
-import com.github.googelfist.moviesearcher.data.datasourse.network.model.preview.MovieListDTO
+import com.github.googelfist.moviesearcher.data.datasourse.network.model.item.MovieItemDTO
+import com.github.googelfist.moviesearcher.data.datasourse.network.model.list.MovieListDTO
 import com.github.googelfist.moviesearcher.domain.model.MovieItem
 import com.github.googelfist.moviesearcher.domain.model.MovieList
 import javax.inject.Inject

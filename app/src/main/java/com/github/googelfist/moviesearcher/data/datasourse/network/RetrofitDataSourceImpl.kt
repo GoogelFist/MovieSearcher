@@ -1,8 +1,8 @@
 package com.github.googelfist.moviesearcher.data.datasourse.network
 
 import com.github.googelfist.moviesearcher.data.datasourse.RemoteDataSource
-import com.github.googelfist.moviesearcher.data.datasourse.network.model.detail.MovieItemDTO
-import com.github.googelfist.moviesearcher.data.datasourse.network.model.preview.MovieListDTO
+import com.github.googelfist.moviesearcher.data.datasourse.network.model.item.MovieItemDTO
+import com.github.googelfist.moviesearcher.data.datasourse.network.model.list.MovieListDTO
 import javax.inject.Inject
 
 class RetrofitDataSourceImpl @Inject constructor(private val retrofitService: RetrofitService) :

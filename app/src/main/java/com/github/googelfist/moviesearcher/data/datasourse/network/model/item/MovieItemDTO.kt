@@ -1,4 +1,4 @@
-package com.github.googelfist.moviesearcher.data.datasourse.network.model.detail
+package com.github.googelfist.moviesearcher.data.datasourse.network.model.item
 
 import com.github.googelfist.moviesearcher.data.datasourse.network.model.Country
 import com.github.googelfist.moviesearcher.data.datasourse.network.model.Genre
