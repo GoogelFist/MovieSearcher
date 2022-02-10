@@ -107,7 +107,7 @@ class MovieListFragment : Fragment() {
                 )
                 replace(
                     R.id.fragment_container,
-                    DetailFragment.getNewInstance()
+                    MovieItemFragment.getNewInstance()
                 )
                 setReorderingAllowed(true)
                 addToBackStack(null)

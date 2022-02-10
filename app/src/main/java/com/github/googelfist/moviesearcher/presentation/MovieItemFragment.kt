@@ -13,7 +13,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 import javax.inject.Inject
 
-class DetailFragment : Fragment() {
+class MovieItemFragment : Fragment() {
 
     @Inject
     lateinit var mainViewModelFabric: MainViewModelFabric
@@ -63,8 +63,8 @@ class DetailFragment : Fragment() {
 
     companion object {
 
-        fun getNewInstance(): DetailFragment {
-            return DetailFragment()
+        fun getNewInstance(): MovieItemFragment {
+            return MovieItemFragment()
         }
     }
 }
