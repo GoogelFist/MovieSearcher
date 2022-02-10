@@ -5,7 +5,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "movie_detail")
 data class MovieDetailDAO(
-    @PrimaryKey val kinopoiskId: Int,
+    @PrimaryKey
+    val kinopoiskId: Int,
     val nameRu: String,
     val nameEn: String,
     val nameOriginal: String,

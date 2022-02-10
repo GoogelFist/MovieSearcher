@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "movie_preview_list_dao")
 data class MoviePreviewListDAO(
-    @PrimaryKey val page: Int,
+    @PrimaryKey
+    val page: Int,
     val moviesPreview: List<MoviePreviewDAO>
 )
