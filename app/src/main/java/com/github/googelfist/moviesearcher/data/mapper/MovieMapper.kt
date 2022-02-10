@@ -7,18 +7,18 @@ import com.github.googelfist.moviesearcher.data.datasourse.network.model.Country
 import com.github.googelfist.moviesearcher.data.datasourse.network.model.Genre
 import com.github.googelfist.moviesearcher.data.datasourse.network.model.detail.MovieDetailDTO
 import com.github.googelfist.moviesearcher.data.datasourse.network.model.preview.MoviePreviewDTO
-import com.github.googelfist.moviesearcher.domain.model.MovieDetail
-import com.github.googelfist.moviesearcher.domain.model.MoviePreview
+import com.github.googelfist.moviesearcher.domain.model.MovieItem
+import com.github.googelfist.moviesearcher.domain.model.MovieList
 import javax.inject.Inject
 
 class MovieMapper @Inject constructor() {
 
-    fun mapMovieDTOtoMoviePreviewList(dto: MoviePreviewDTO): List<MoviePreview> {
+    fun mapMovieDTOtoMoviePreviewList(dto: MoviePreviewDTO): List<MovieList> {
         val films = dto.films
-        val result = mutableListOf<MoviePreview>()
+        val result = mutableListOf<MovieList>()
         films.forEach {
             result.add(
-                MoviePreview(
+                MovieList(
                     kinopoiskId = it.filmId,
                     nameRu = it.nameRu,
                     nameEn = it.nameEn ?: it.nameRu,
@@ -29,12 +29,28 @@ class MovieMapper @Inject constructor() {
         return result
     }
 
+    fun mapMovieListDAOtoMoviePreviewList(moviePreviewListDAO: MoviePreviewListDAO): List<MovieList> {
+        val films = moviePreviewListDAO.moviesPreview
+        val result = mutableListOf<MovieList>()
+        films.forEach {
+            result.add(
+                MovieList(
+                    kinopoiskId = it.kinopoiskId,
+                    nameRu = it.nameRu,
+                    nameEn = it.nameEn,
+                    posterUrl = it.posterUrl
+                )
+            )
+        }
+        return result
+    }
+
     fun mapMoviePreviewToMoviePreviewListDAO(
         page: Int,
-        moviePreview: List<MoviePreview>
+        movieList: List<MovieList>
     ): MoviePreviewListDAO {
 
-        val moviePreviewListDAO = moviePreview.map {
+        val moviePreviewListDAO = movieList.map {
             MoviePreviewDAO(
                 kinopoiskId = it.kinopoiskId,
                 nameRu = it.nameRu,
@@ -46,8 +62,8 @@ class MovieMapper @Inject constructor() {
         return MoviePreviewListDAO(page, moviePreviewListDAO)
     }
 
-    fun mapMovieDTOtoMovieDetail(dto: MovieDetailDTO): MovieDetail {
-        return MovieDetail(
+    fun mapMovieDTOtoMovieDetail(dto: MovieDetailDTO): MovieItem {
+        return MovieItem(
             kinopoiskId = dto.kinopoiskId,
             nameRu = dto.nameRu,
             nameEn = (dto.nameEn).let { dto.nameEn as String? } ?: dto.nameRu,
@@ -61,18 +77,18 @@ class MovieMapper @Inject constructor() {
         )
     }
 
-    fun mapMovieDetailToMovieDAO(movieDetail: MovieDetail): MovieDetailDAO {
+    fun mapMovieDetailToMovieDAO(movieItem: MovieItem): MovieDetailDAO {
         return MovieDetailDAO(
-            kinopoiskId = movieDetail.kinopoiskId,
-            nameRu = movieDetail.nameRu,
-            nameEn = movieDetail.nameEn,
-            nameOriginal = movieDetail.nameOriginal,
-            posterUrl = movieDetail.posterUrl,
-            ratingKinopoisk = movieDetail.ratingKinopoisk,
-            year = movieDetail.year,
-            description = movieDetail.description,
-            country = movieDetail.country,
-            genre = movieDetail.genre
+            kinopoiskId = movieItem.kinopoiskId,
+            nameRu = movieItem.nameRu,
+            nameEn = movieItem.nameEn,
+            nameOriginal = movieItem.nameOriginal,
+            posterUrl = movieItem.posterUrl,
+            ratingKinopoisk = movieItem.ratingKinopoisk,
+            year = movieItem.year,
+            description = movieItem.description,
+            country = movieItem.country,
+            genre = movieItem.genre
         )
     }
 

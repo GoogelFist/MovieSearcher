@@ -5,10 +5,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.ListAdapter
 import com.github.googelfist.moviesearcher.R
-import com.github.googelfist.moviesearcher.domain.model.MoviePreview
+import com.github.googelfist.moviesearcher.domain.model.MovieList
 
 class MoviesPreviewAdapter :
-    ListAdapter<MoviePreview, MoviesPreviewViewHolder>(MoviePreviewDiffCallback()) {
+    ListAdapter<MovieList, MoviesPreviewViewHolder>(MoviePreviewDiffCallback()) {
 
     lateinit var onMoviePreviewClickListener: ((ImageView, Int) -> Unit)
     lateinit var onScrolledToBottom: (() -> Unit)

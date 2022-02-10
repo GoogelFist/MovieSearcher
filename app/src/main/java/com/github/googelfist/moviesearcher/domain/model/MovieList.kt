@@ -1,6 +1,6 @@
 package com.github.googelfist.moviesearcher.domain.model
 
-data class MoviePreview(
+data class MovieList(
     val kinopoiskId: Int,
     val nameRu: String,
     val nameEn: String?,

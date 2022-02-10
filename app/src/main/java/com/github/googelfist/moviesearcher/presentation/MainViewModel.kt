@@ -8,8 +8,8 @@ import com.github.googelfist.moviesearcher.data.LoadMovieDetailError
 import com.github.googelfist.moviesearcher.data.LoadTop250BestFilmsError
 import com.github.googelfist.moviesearcher.domain.LoadMovieDetailUseCase
 import com.github.googelfist.moviesearcher.domain.LoadPageTop250UseCase
-import com.github.googelfist.moviesearcher.domain.model.MovieDetail
-import com.github.googelfist.moviesearcher.domain.model.MoviePreview
+import com.github.googelfist.moviesearcher.domain.model.MovieItem
+import com.github.googelfist.moviesearcher.domain.model.MovieList
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -22,12 +22,12 @@ class MainViewModel(
     val errorMessage: LiveData<String>
         get() = _errorMessage
 
-    private var _movieList = MutableLiveData<List<MoviePreview>>()
-    val movieList: LiveData<List<MoviePreview>>
+    private var _movieList = MutableLiveData<List<MovieList>>()
+    val movieList: LiveData<List<MovieList>>
         get() = _movieList
 
-    private var _movieDetail = MutableLiveData<MovieDetail>()
-    val movieDetail: LiveData<MovieDetail>
+    private var _movieDetail = MutableLiveData<MovieItem>()
+    val movieItem: LiveData<MovieItem>
         get() = _movieDetail
 
     private var _loading = MutableLiveData<Boolean>(false)
@@ -55,7 +55,7 @@ class MainViewModel(
         }
     }
 
-    private fun launchLoadMovies(block: suspend () -> List<MoviePreview>): Job {
+    private fun launchLoadMovies(block: suspend () -> List<MovieList>): Job {
         return viewModelScope.launch {
             try {
                 _loading.value = true

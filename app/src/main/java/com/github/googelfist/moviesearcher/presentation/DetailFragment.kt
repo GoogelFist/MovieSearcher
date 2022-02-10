@@ -45,7 +45,7 @@ class DetailFragment : Fragment() {
             it?.let { Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show() }
         }
 
-        mainViewModel.movieDetail.observe(viewLifecycleOwner) {
+        mainViewModel.movieItem.observe(viewLifecycleOwner) {
             Picasso.get().load(it.posterUrl).into(binding.ivPreviewMovieImage)
             binding.tvDetailCountry.text = it.country
             binding.tvDetailMovieName.text = it.nameOriginal

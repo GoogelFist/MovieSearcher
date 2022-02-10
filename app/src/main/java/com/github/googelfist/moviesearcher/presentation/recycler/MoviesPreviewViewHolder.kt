@@ -5,7 +5,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.github.googelfist.moviesearcher.R
-import com.github.googelfist.moviesearcher.domain.model.MoviePreview
+import com.github.googelfist.moviesearcher.domain.model.MovieList
 import com.squareup.picasso.Picasso
 
 class MoviesPreviewViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -13,7 +13,7 @@ class MoviesPreviewViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     private val name: TextView = view.findViewById(R.id.tv_preview_movie_name)
     private val number: TextView = view.findViewById(R.id.tv_preview_number)
 
-    fun bind(movie: MoviePreview, position: Int) {
+    fun bind(movie: MovieList, position: Int) {
         Picasso.get().load(movie.posterUrl).into(this.imagePreview)
         name.text = movie.nameEn
 
