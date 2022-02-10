@@ -6,6 +6,6 @@ import javax.inject.Inject
 class LoadMovieDetailUseCase @Inject constructor(private val repository: Repository) {
 
     suspend operator fun invoke(id: Int): MovieItem {
-        return repository.loadMovieDetail(id)
+        return repository.loadMovieItem(id)
     }
 }

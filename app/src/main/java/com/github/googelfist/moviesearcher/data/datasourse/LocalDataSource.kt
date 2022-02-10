@@ -9,7 +9,7 @@ interface LocalDataSource {
 
     suspend fun insertMoviePageList(moviesPageDAO: MoviePageListDAO)
 
-    suspend fun loadMovieItem(id: Int): MovieItemDAO
+    suspend fun loadMovieItem(id: Int): MovieItemDAO?
 
     suspend fun insertMovieItem(movieItem: MovieItemDAO)
 

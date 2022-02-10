@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.googelfist.moviesearcher.data.LoadMovieDetailError
-import com.github.googelfist.moviesearcher.data.LoadTop250BestFilmsError
+import com.github.googelfist.moviesearcher.data.RemoteLoadMovieItemError
+import com.github.googelfist.moviesearcher.data.RemoteLoadMovieListError
 import com.github.googelfist.moviesearcher.domain.LoadMovieDetailUseCase
 import com.github.googelfist.moviesearcher.domain.LoadPageTop250UseCase
 import com.github.googelfist.moviesearcher.domain.model.MovieItem
@@ -47,7 +47,7 @@ class MainViewModel(
                 _loading.value = true
                 val movieDetail = loadMovieDetailUseCase.invoke(id)
                 _movieDetail.value = movieDetail
-            } catch (error: LoadMovieDetailError) {
+            } catch (error: RemoteLoadMovieItemError) {
                 _errorMessage.value = error.message
             } finally {
                 _loading.value = false
@@ -60,7 +60,7 @@ class MainViewModel(
             try {
                 _loading.value = true
                 _movieList.value = block()
-            } catch (error: LoadTop250BestFilmsError) {
+            } catch (error: RemoteLoadMovieListError) {
                 _errorMessage.value = error.message
             } finally {
                 _loading.value = false

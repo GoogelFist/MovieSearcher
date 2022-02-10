@@ -16,7 +16,7 @@ class RetrofitDataSourceImpl @Inject constructor(private val retrofitService: Re
         )
     }
 
-    override suspend fun loadMovieDetail(id: Int): MovieItemDTO {
+    override suspend fun loadMovieItem(id: Int): MovieItemDTO {
         return retrofitService.getMovie(
             authToken = AUTH_TOKEN,
             contentType = CONTENT_TYPE,

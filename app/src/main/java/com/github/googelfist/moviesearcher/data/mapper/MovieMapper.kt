@@ -77,6 +77,21 @@ class MovieMapper @Inject constructor() {
         )
     }
 
+    fun mapMovieItemDAOToMovieItem(movieItem: MovieItemDAO): MovieItem {
+        return MovieItem(
+            kinopoiskId = movieItem.kinopoiskId,
+            nameRu = movieItem.nameRu,
+            nameEn = movieItem.nameEn,
+            nameOriginal = movieItem.nameOriginal,
+            posterUrl = movieItem.posterUrl,
+            ratingKinopoisk = movieItem.ratingKinopoisk,
+            year = movieItem.year,
+            description = movieItem.description,
+            country = movieItem.country,
+            genre = movieItem.genre
+        )
+    }
+
     fun mapMovieItemToMovieItemDAO(movieItem: MovieItem): MovieItemDAO {
         return MovieItemDAO(
             kinopoiskId = movieItem.kinopoiskId,

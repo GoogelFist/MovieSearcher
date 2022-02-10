@@ -6,5 +6,5 @@ import com.github.googelfist.moviesearcher.data.datasourse.network.model.list.Mo
 interface RemoteDataSource {
     suspend fun loadTop250BestFilms(page: Int): MovieListDTO
 
-    suspend fun loadMovieDetail(id: Int): MovieItemDTO
+    suspend fun loadMovieItem(id: Int): MovieItemDTO
 }

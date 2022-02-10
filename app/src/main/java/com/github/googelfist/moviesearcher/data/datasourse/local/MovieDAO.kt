@@ -18,7 +18,7 @@ interface MovieDAO {
     suspend fun insertMoviePageList(moviesPageDAO: MoviePageListDAO)
 
     @Query("SELECT * FROM movie_item WHERE kinopoiskId = :id")
-    suspend fun loadMovieItem(id: Int): MovieItemDAO
+    suspend fun loadMovieItem(id: Int): MovieItemDAO?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMovieItem(movieItemDAO: MovieItemDAO)

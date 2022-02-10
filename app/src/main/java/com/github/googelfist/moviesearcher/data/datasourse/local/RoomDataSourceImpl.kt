@@ -8,17 +8,15 @@ import javax.inject.Inject
 
 class RoomDataSourceImpl @Inject constructor(private val movieDAO: MovieDAO) : LocalDataSource {
 
-    override suspend fun loadMoviePageList(page: Int): MoviePageListDAO?{
+    override suspend fun loadMoviePageList(page: Int): MoviePageListDAO? {
         return movieDAO.loadMoviePageList(page)
     }
 
-    override suspend fun insertMoviePageList(
-        moviesPageDAO: MoviePageListDAO
-    ) {
+    override suspend fun insertMoviePageList(moviesPageDAO: MoviePageListDAO) {
         movieDAO.insertMoviePageList(moviesPageDAO)
     }
 
-    override suspend fun loadMovieItem(id: Int): MovieItemDAO {
+    override suspend fun loadMovieItem(id: Int): MovieItemDAO? {
         return movieDAO.loadMovieItem(id)
     }
 

@@ -21,60 +21,40 @@ class RepositoryImp @Inject constructor(
 
     private var previewMovies = mutableListOf<MovieList>()
 
-    override suspend fun loadPageTop250BestFilms(): List<MovieList> {
+    override suspend fun loadMovieList(): List<MovieList> {
 
-        if (top250PageCount == PAGE_COUNT_ZERO) {
-            top250PageCount = localLoadPageCount()
-        }
+        top250PageCount = updatePageCount()
 
         when {
             pageNumber == PAGE_COUNT_ONE -> {
-                val localMovies = localLoadTop250BestFilms(PAGE_COUNT_ONE)
-                previewMovies = if (localMovies.isEmpty()) {
-                    val movies = remoteLoadTop250BestFilms(PAGE_COUNT_ONE)
-                    localSaveTop250BestFilms(movies)
-
-                    movies as MutableList<MovieList>
-                } else {
-                    localMovies as MutableList<MovieList>
-                }
+                val movies = updateMovieList(PAGE_COUNT_ONE)
+                previewMovies = movies as MutableList<MovieList>
                 increasePageNumber()
             }
             pageNumber < top250PageCount -> {
-                val localMovies = localLoadTop250BestFilms(pageNumber)
-                if (localMovies.isEmpty()) {
-                    val movies = remoteLoadTop250BestFilms(pageNumber)
-                    localSaveTop250BestFilms(movies)
-
-                    previewMovies.addAll(movies)
-                } else {
-                    previewMovies.addAll(localMovies)
-                }
+                val movies = updateMovieList(pageNumber)
+                previewMovies.addAll(movies)
                 increasePageNumber()
             }
         }
         return previewMovies.toList()
     }
 
-    override suspend fun loadMovieDetail(id: Int): MovieItem {
-        return remoteLoadMovieDetail(id)
+    override suspend fun loadMovieItem(id: Int): MovieItem {
+        return updateMovieItem(id)
     }
 
-    private suspend fun localLoadTop250BestFilms(page: Int): List<MovieList> {
+    private suspend fun updateMovieList(page: Int): List<MovieList> {
         val result = localDataSource.loadMoviePageList(page)
         result?.let {
             return mapper.mapMoviePageListDAOtoMovieList(it)
         }
-        return emptyList()
+        val remoteMovieList = remoteLoadMovieList(page)
+        localSaveMovieList(remoteMovieList)
+        return remoteMovieList
     }
 
-    private suspend fun localSaveTop250BestFilms(movieList: List<MovieList>) {
-        val moviePageListDAO = mapper.mapMovieListToMoviePageListDAO(pageNumber, movieList)
-
-        localDataSource.insertMoviePageList(moviePageListDAO)
-    }
-
-    private suspend fun remoteLoadTop250BestFilms(page: Int): List<MovieList> {
+    private suspend fun remoteLoadMovieList(page: Int): List<MovieList> {
         try {
             val result = remoteDataSource.loadTop250BestFilms(page)
 
@@ -82,11 +62,41 @@ class RepositoryImp @Inject constructor(
 
             return mapper.mapMovieListDTOtoMovieList(result)
         } catch (error: Throwable) {
-            throw LoadTop250BestFilmsError("Unable to load top 250 best films", error)
+            throw RemoteLoadMovieListError("Unable to load top 250 best films", error)
         }
     }
 
-    private suspend fun localLoadPageCount(): Int {
+    private suspend fun localSaveMovieList(movieList: List<MovieList>) {
+        val moviePageListDAO = mapper.mapMovieListToMoviePageListDAO(pageNumber, movieList)
+        localDataSource.insertMoviePageList(moviePageListDAO)
+    }
+
+    private suspend fun updateMovieItem(id: Int): MovieItem {
+        val localResult = localDataSource.loadMovieItem(id)
+        localResult?.let {
+            return mapper.mapMovieItemDAOToMovieItem(it)
+        }
+        val remoteMovieItem = remoteLoadMovieItem(id)
+        localSaveMovieItem(remoteMovieItem)
+        return remoteMovieItem
+    }
+
+    private suspend fun remoteLoadMovieItem(id: Int): MovieItem {
+        try {
+            val result = remoteDataSource.loadMovieItem(id)
+
+            return mapper.mapMovieItemDTOtoMovieItem(result)
+        } catch (error: Throwable) {
+            throw RemoteLoadMovieItemError("Unable to load movie detail", error)
+        }
+    }
+
+    private suspend fun localSaveMovieItem(movieItem: MovieItem) {
+        val movieItemDAO = mapper.mapMovieItemToMovieItemDAO(movieItem)
+        localDataSource.insertMovieItem(movieItemDAO)
+    }
+
+    private suspend fun updatePageCount(): Int {
         val pageCountDAO = localDataSource.loadPageCount()
         pageCountDAO?.let {
             return pageCountDAO.pageCount
@@ -99,16 +109,6 @@ class RepositoryImp @Inject constructor(
         localDataSource.insertPageCount(PageCountDAO(pageCount))
     }
 
-    private suspend fun remoteLoadMovieDetail(id: Int): MovieItem {
-        try {
-            val result = remoteDataSource.loadMovieDetail(id)
-
-            return mapper.mapMovieItemDTOtoMovieItem(result)
-        } catch (error: Throwable) {
-            throw LoadMovieDetailError("Unable to load movie detail", error)
-        }
-    }
-
     private fun increasePageNumber() {
         pageNumber++
     }
@@ -119,5 +119,5 @@ class RepositoryImp @Inject constructor(
     }
 }
 
-class LoadTop250BestFilmsError(message: String, cause: Throwable) : Throwable(message, cause)
-class LoadMovieDetailError(message: String, cause: Throwable) : Throwable(message, cause)
+class RemoteLoadMovieListError(message: String, cause: Throwable) : Throwable(message, cause)
+class RemoteLoadMovieItemError(message: String, cause: Throwable) : Throwable(message, cause)
