@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.fragment_container, PreviewFragment.getNewInstance())
+                .replace(R.id.fragment_container, MovieListFragment.getNewInstance())
                 .setReorderingAllowed(true)
                 .commit()
         }

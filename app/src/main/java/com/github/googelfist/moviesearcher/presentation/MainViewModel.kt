@@ -30,7 +30,7 @@ class MainViewModel(
     val movieDetail: LiveData<MovieDetail>
         get() = _movieDetail
 
-    private var _loading = MutableLiveData<Boolean>()
+    private var _loading = MutableLiveData<Boolean>(false)
     val loading: LiveData<Boolean>
         get() = _loading
 
@@ -44,28 +44,27 @@ class MainViewModel(
     fun onLoadMovieDetail(id: Int) {
         viewModelScope.launch {
             try {
+                _loading.value = true
                 val movieDetail = loadMovieDetailUseCase.invoke(id)
                 _movieDetail.value = movieDetail
-                _loading.value = false
             } catch (error: LoadMovieDetailError) {
-                error.message?.let { onError(it) }
+                _errorMessage.value = error.message
+            } finally {
+                _loading.value = false
             }
         }
     }
 
-    private fun launchLoadMovies(block: suspend () -> List<MoviePreview>) : Job {
+    private fun launchLoadMovies(block: suspend () -> List<MoviePreview>): Job {
         return viewModelScope.launch {
             try {
+                _loading.value = true
                 _movieList.value = block()
-                _loading.value = false
             } catch (error: LoadTop250BestFilmsError) {
-                error.message?.let { onError(it) }
+                _errorMessage.value = error.message
+            } finally {
+                _loading.value = false
             }
         }
-    }
-
-    private fun onError(message: String) {
-        _errorMessage.value = message
-        _loading.value = false
     }
 }

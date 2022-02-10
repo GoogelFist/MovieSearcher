@@ -11,6 +11,7 @@ class MoviesPreviewAdapter :
     ListAdapter<MoviePreview, MoviesPreviewViewHolder>(MoviePreviewDiffCallback()) {
 
     lateinit var onMoviePreviewClickListener: ((ImageView, Int) -> Unit)
+    lateinit var onScrolledToBottom: (() -> Unit)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MoviesPreviewViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -24,5 +25,12 @@ class MoviesPreviewAdapter :
         holder.imagePreview.setOnClickListener {
             onMoviePreviewClickListener.invoke(it as ImageView, movie.kinopoiskId)
         }
+
+        if ((position >= itemCount - ONE_VALUE))
+            onScrolledToBottom.invoke()
+    }
+
+    companion object {
+        private const val ONE_VALUE = 1
     }
 }
