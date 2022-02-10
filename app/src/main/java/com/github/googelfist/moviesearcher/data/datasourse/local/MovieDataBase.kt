@@ -3,12 +3,12 @@ package com.github.googelfist.moviesearcher.data.datasourse.local
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.github.googelfist.moviesearcher.data.datasourse.local.model.MovieDetailDAO
-import com.github.googelfist.moviesearcher.data.datasourse.local.model.MoviePreviewDAO
-import com.github.googelfist.moviesearcher.data.datasourse.local.model.MoviePreviewListDAO
+import com.github.googelfist.moviesearcher.data.datasourse.local.model.MovieItemDAO
+import com.github.googelfist.moviesearcher.data.datasourse.local.model.MovieListDAO
+import com.github.googelfist.moviesearcher.data.datasourse.local.model.MoviePageListDAO
 
 @Database(
-    entities = [MovieDetailDAO::class, MoviePreviewDAO::class, MoviePreviewListDAO::class],
+    entities = [MovieItemDAO::class, MovieListDAO::class, MoviePageListDAO::class],
     version = DB_VERSION,
     exportSchema = false
 )
@@ -18,4 +18,4 @@ abstract class MovieDataBase : RoomDatabase() {
     abstract fun getMovieDao(): MovieDAO
 }
 
-private const val DB_VERSION = 3
+private const val DB_VERSION = 4

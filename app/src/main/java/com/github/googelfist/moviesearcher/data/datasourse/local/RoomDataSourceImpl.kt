@@ -1,28 +1,27 @@
 package com.github.googelfist.moviesearcher.data.datasourse.local
 
 import com.github.googelfist.moviesearcher.data.datasourse.LocalDataSource
-import com.github.googelfist.moviesearcher.data.datasourse.local.model.MovieDetailDAO
-import com.github.googelfist.moviesearcher.data.datasourse.local.model.MoviePreviewDAO
-import com.github.googelfist.moviesearcher.data.datasourse.local.model.MoviePreviewListDAO
+import com.github.googelfist.moviesearcher.data.datasourse.local.model.MovieItemDAO
+import com.github.googelfist.moviesearcher.data.datasourse.local.model.MoviePageListDAO
 import javax.inject.Inject
 
 class RoomDataSourceImpl @Inject constructor(private val movieDAO: MovieDAO) : LocalDataSource {
 
-    override suspend fun loadTop250BestFilms(page: Int): MoviePreviewListDAO{
+    override suspend fun loadTop250BestFilms(page: Int): MoviePageListDAO{
         return movieDAO.loadTop250BestFilms(page)
     }
 
     override suspend fun insertMoviePreviewList(
-        moviesPreviewDAO: MoviePreviewListDAO
+        moviesPageDAO: MoviePageListDAO
     ) {
-        movieDAO.insertMoviePreviewList(moviesPreviewDAO)
+        movieDAO.insertMoviePreviewList(moviesPageDAO)
     }
 
-    override suspend fun loadMovieDetail(id: Int): MovieDetailDAO {
+    override suspend fun loadMovieDetail(id: Int): MovieItemDAO {
         return movieDAO.loadMovieDetail(id)
     }
 
-    override suspend fun insertMovieDetail(movieDetail: MovieDetailDAO) {
-        movieDAO.insertMovieDetail(movieDetail)
+    override suspend fun insertMovieDetail(movieItem: MovieItemDAO) {
+        movieDAO.insertMovieDetail(movieItem)
     }
 }

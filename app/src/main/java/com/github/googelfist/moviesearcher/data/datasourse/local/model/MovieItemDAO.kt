@@ -3,8 +3,8 @@ package com.github.googelfist.moviesearcher.data.datasourse.local.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "movie_detail")
-data class MovieDetailDAO(
+@Entity(tableName = "movie_item")
+data class MovieItemDAO(
     @PrimaryKey
     val kinopoiskId: Int,
     val nameRu: String,

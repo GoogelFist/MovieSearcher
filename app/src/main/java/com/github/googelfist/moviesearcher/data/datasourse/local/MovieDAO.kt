@@ -4,22 +4,21 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.github.googelfist.moviesearcher.data.datasourse.local.model.MovieDetailDAO
-import com.github.googelfist.moviesearcher.data.datasourse.local.model.MoviePreviewDAO
-import com.github.googelfist.moviesearcher.data.datasourse.local.model.MoviePreviewListDAO
+import com.github.googelfist.moviesearcher.data.datasourse.local.model.MovieItemDAO
+import com.github.googelfist.moviesearcher.data.datasourse.local.model.MoviePageListDAO
 
 @Dao
 interface MovieDAO {
 
-    @Query("SELECT * FROM movie_preview_list_dao WHERE page = :page")
-    suspend fun loadTop250BestFilms(page: Int): MoviePreviewListDAO
+    @Query("SELECT * FROM movie_page_list_dao WHERE page = :page")
+    suspend fun loadTop250BestFilms(page: Int): MoviePageListDAO
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMoviePreviewList(moviesPreviewDAO: MoviePreviewListDAO)
+    suspend fun insertMoviePreviewList(moviesPageDAO: MoviePageListDAO)
 
-    @Query("SELECT * FROM movie_detail WHERE kinopoiskId = :id")
-    suspend fun loadMovieDetail(id: Int): MovieDetailDAO
+    @Query("SELECT * FROM movie_item WHERE kinopoiskId = :id")
+    suspend fun loadMovieDetail(id: Int): MovieItemDAO
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMovieDetail(movieDetailDAO: MovieDetailDAO)
+    suspend fun insertMovieDetail(movieItemDAO: MovieItemDAO)
 }
