@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 class MovieMapper @Inject constructor() {
 
-    fun mapMovieDTOtoMoviePreviewList(dto: MovieListDTO): List<MovieList> {
+    fun mapMovieListDTOtoMovieList(dto: MovieListDTO): List<MovieList> {
         val films = dto.films
         val result = mutableListOf<MovieList>()
         films.forEach {
@@ -29,7 +29,7 @@ class MovieMapper @Inject constructor() {
         return result
     }
 
-    fun mapMovieListDAOtoMoviePreviewList(moviePageListDAO: MoviePageListDAO): List<MovieList> {
+    fun mapMoviePageListDAOtoMovieList(moviePageListDAO: MoviePageListDAO): List<MovieList> {
         val films = moviePageListDAO.moviesList
         val result = mutableListOf<MovieList>()
         films.forEach {
@@ -45,7 +45,7 @@ class MovieMapper @Inject constructor() {
         return result
     }
 
-    fun mapMoviePreviewToMoviePreviewListDAO(
+    fun mapMovieListToMoviePageListDAO(
         page: Int,
         movieList: List<MovieList>
     ): MoviePageListDAO {
@@ -62,7 +62,7 @@ class MovieMapper @Inject constructor() {
         return MoviePageListDAO(page, moviePreviewListDAO)
     }
 
-    fun mapMovieDTOtoMovieDetail(dto: MovieItemDTO): MovieItem {
+    fun mapMovieItemDTOtoMovieItem(dto: MovieItemDTO): MovieItem {
         return MovieItem(
             kinopoiskId = dto.kinopoiskId,
             nameRu = dto.nameRu,
@@ -77,7 +77,7 @@ class MovieMapper @Inject constructor() {
         )
     }
 
-    fun mapMovieDetailToMovieDAO(movieItem: MovieItem): MovieItemDAO {
+    fun mapMovieItemToMovieItemDAO(movieItem: MovieItem): MovieItemDAO {
         return MovieItemDAO(
             kinopoiskId = movieItem.kinopoiskId,
             nameRu = movieItem.nameRu,
