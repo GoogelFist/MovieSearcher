@@ -5,15 +5,15 @@ import com.github.googelfist.moviesearcher.data.datasourse.local.model.MoviePrev
 import com.github.googelfist.moviesearcher.data.datasourse.local.model.MoviePreviewListDAO
 import com.github.googelfist.moviesearcher.data.datasourse.network.model.Country
 import com.github.googelfist.moviesearcher.data.datasourse.network.model.Genre
-import com.github.googelfist.moviesearcher.data.datasourse.network.model.detail.MovieDetailDTO
-import com.github.googelfist.moviesearcher.data.datasourse.network.model.preview.MoviePreviewDTO
+import com.github.googelfist.moviesearcher.data.datasourse.network.model.detail.MovieItemDTO
+import com.github.googelfist.moviesearcher.data.datasourse.network.model.preview.MovieListDTO
 import com.github.googelfist.moviesearcher.domain.model.MovieItem
 import com.github.googelfist.moviesearcher.domain.model.MovieList
 import javax.inject.Inject
 
 class MovieMapper @Inject constructor() {
 
-    fun mapMovieDTOtoMoviePreviewList(dto: MoviePreviewDTO): List<MovieList> {
+    fun mapMovieDTOtoMoviePreviewList(dto: MovieListDTO): List<MovieList> {
         val films = dto.films
         val result = mutableListOf<MovieList>()
         films.forEach {
@@ -62,7 +62,7 @@ class MovieMapper @Inject constructor() {
         return MoviePreviewListDAO(page, moviePreviewListDAO)
     }
 
-    fun mapMovieDTOtoMovieDetail(dto: MovieDetailDTO): MovieItem {
+    fun mapMovieDTOtoMovieDetail(dto: MovieItemDTO): MovieItem {
         return MovieItem(
             kinopoiskId = dto.kinopoiskId,
             nameRu = dto.nameRu,
