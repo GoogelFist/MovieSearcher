@@ -2,13 +2,18 @@ package com.github.googelfist.moviesearcher.data.datasourse
 
 import com.github.googelfist.moviesearcher.data.datasourse.local.model.MovieItemDAO
 import com.github.googelfist.moviesearcher.data.datasourse.local.model.MoviePageListDAO
+import com.github.googelfist.moviesearcher.data.datasourse.local.model.PageCountDAO
 
 interface LocalDataSource {
-    suspend fun loadTop250BestFilms(page: Int): MoviePageListDAO
+    suspend fun loadMoviePageList(page: Int): MoviePageListDAO?
 
-    suspend fun insertMoviePreviewList(moviesPageDAO: MoviePageListDAO)
+    suspend fun insertMoviePageList(moviesPageDAO: MoviePageListDAO)
 
-    suspend fun loadMovieDetail(id: Int): MovieItemDAO
+    suspend fun loadMovieItem(id: Int): MovieItemDAO
 
-    suspend fun insertMovieDetail(movieItem: MovieItemDAO)
+    suspend fun insertMovieItem(movieItem: MovieItemDAO)
+
+    suspend fun loadPageCount(): PageCountDAO?
+
+    suspend fun insertPageCount(pageCount: PageCountDAO)
 }

@@ -6,9 +6,10 @@ import androidx.room.TypeConverters
 import com.github.googelfist.moviesearcher.data.datasourse.local.model.MovieItemDAO
 import com.github.googelfist.moviesearcher.data.datasourse.local.model.MovieListDAO
 import com.github.googelfist.moviesearcher.data.datasourse.local.model.MoviePageListDAO
+import com.github.googelfist.moviesearcher.data.datasourse.local.model.PageCountDAO
 
 @Database(
-    entities = [MovieItemDAO::class, MovieListDAO::class, MoviePageListDAO::class],
+    entities = [MovieItemDAO::class, MovieListDAO::class, MoviePageListDAO::class, PageCountDAO::class],
     version = DB_VERSION,
     exportSchema = false
 )
@@ -18,4 +19,4 @@ abstract class MovieDataBase : RoomDatabase() {
     abstract fun getMovieDao(): MovieDAO
 }
 
-private const val DB_VERSION = 4
+private const val DB_VERSION = 5
