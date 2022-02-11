@@ -5,20 +5,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.github.googelfist.moviesearcher.R
 import com.github.googelfist.moviesearcher.component
-import com.github.googelfist.moviesearcher.databinding.FragmentPreviewBinding
+import com.github.googelfist.moviesearcher.databinding.FragmentListBinding
 import com.github.googelfist.moviesearcher.presentation.recycler.MoviesPreviewAdapter
 import com.google.android.material.snackbar.Snackbar
 import javax.inject.Inject
 
-class PreviewFragment : Fragment() {
+class MovieListFragment : Fragment() {
 
     @Inject
     lateinit var mainViewModelFabric: MainViewModelFabric
@@ -26,8 +24,8 @@ class PreviewFragment : Fragment() {
     lateinit var moviesPreviewAdapter: MoviesPreviewAdapter
     lateinit var linearLayoutManager: LinearLayoutManager
 
-    private var _binding: FragmentPreviewBinding? = null
-    private val binding: FragmentPreviewBinding
+    private var _binding: FragmentListBinding? = null
+    private val binding: FragmentListBinding
         get() = _binding!!
 
     private val mainViewModel by activityViewModels<MainViewModel> { mainViewModelFabric }
@@ -42,7 +40,7 @@ class PreviewFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPreviewBinding.inflate(inflater, container, false)
+        _binding = FragmentListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -50,19 +48,55 @@ class PreviewFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
+        observeViewModel(view)
+        movieListInit()
+        setMoviePreviewOnClickListener()
+        setupButtons()
+    }
 
-        mainViewModel.movieList.observe(viewLifecycleOwner) { moviesPreviewAdapter.submitList(it) }
-        mainViewModel.loading.observe(viewLifecycleOwner) {
-            binding.pbFragmentPreview.isVisible = it
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
+    private fun setupRecyclerView() {
+        val rvMoviesPreview = binding.rvMoviesList
+
+        linearLayoutManager = LinearLayoutManager(requireActivity())
+        rvMoviesPreview.layoutManager = linearLayoutManager
+
+        moviesPreviewAdapter = MoviesPreviewAdapter()
+        rvMoviesPreview.adapter = moviesPreviewAdapter
+
+        moviesPreviewAdapter.onScrolledToBottom = {
+            mainViewModel.onLoadMovieList()
         }
+    }
+
+
+    private fun observeViewModel(view: View) {
+        mainViewModel.movieList.observe(viewLifecycleOwner) { moviesPreviewAdapter.submitList(it) }
+
+        mainViewModel.loading.observe(viewLifecycleOwner) { value ->
+            value.let { show ->
+                binding.pbFragmentList.visibility = if (show) View.VISIBLE else View.GONE
+            }
+        }
+
         mainViewModel.errorMessage.observe(viewLifecycleOwner) {
             it?.let { Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show() }
         }
+    }
 
-        mainViewModel.onLoadPageTop250BestFilms()
+    private fun movieListInit() {
+        if (mainViewModel.movieList.value == null) {
+            mainViewModel.onLoadMovieList()
+        }
+    }
 
+    private fun setMoviePreviewOnClickListener() {
         moviesPreviewAdapter.onMoviePreviewClickListener = { _, kinopoiskId ->
-            mainViewModel.onLoadMovieDetail(kinopoiskId)
+            mainViewModel.onLoadMovieItem(kinopoiskId)
 
             requireActivity().supportFragmentManager.commit {
                 setCustomAnimations(
@@ -73,57 +107,25 @@ class PreviewFragment : Fragment() {
                 )
                 replace(
                     R.id.fragment_container,
-                    DetailFragment.getNewInstance()
+                    MovieItemFragment.getNewInstance()
                 )
                 setReorderingAllowed(true)
                 addToBackStack(null)
             }
         }
+    }
 
-        binding.fabLoad.setOnClickListener {
+    private fun setupButtons() {
+        binding.fabUpList.setOnClickListener {
             linearLayoutManager.scrollToPosition(SCROLL_TO_POSITION_VALUE)
         }
     }
 
-    private fun setupRecyclerView() {
-        val rvMoviesPreview = binding.rvMoviesPreview
-
-        linearLayoutManager = LinearLayoutManager(requireActivity())
-        rvMoviesPreview.layoutManager = linearLayoutManager
-
-        moviesPreviewAdapter = MoviesPreviewAdapter()
-        rvMoviesPreview.adapter = moviesPreviewAdapter
-
-        rvMoviesPreview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                val preloadPosition = moviesPreviewAdapter.itemCount - PRELOAD_POSITION
-
-                if (linearLayoutManager.findLastCompletelyVisibleItemPosition() == preloadPosition) {
-                    mainViewModel.onLoadPageTop250BestFilms()
-
-                    val lastPosition = moviesPreviewAdapter.itemCount - ONE_VALUE
-
-                    recyclerView.post {
-                        moviesPreviewAdapter.notifyItemRangeChanged(lastPosition, ITEM_COUNT)
-                    }
-                }
-            }
-        })
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
-    }
-
     companion object {
-        private const val PRELOAD_POSITION = 3
-        private const val ITEM_COUNT = 20
         private const val SCROLL_TO_POSITION_VALUE = 0
-        private const val ONE_VALUE = 1
 
-        fun getNewInstance(): PreviewFragment {
-            return PreviewFragment()
+        fun getNewInstance(): MovieListFragment {
+            return MovieListFragment()
         }
     }
 }

@@ -1,9 +1,9 @@
-package com.github.googelfist.moviesearcher.data.datasourse.network.model.detail
+package com.github.googelfist.moviesearcher.data.datasourse.network.model.item
 
 import com.github.googelfist.moviesearcher.data.datasourse.network.model.Country
 import com.github.googelfist.moviesearcher.data.datasourse.network.model.Genre
 
-data class MovieDetailDTO(
+data class MovieItemDTO(
     val completed: Boolean,
     val countries: List<Country>,
     val description: String,

@@ -1,14 +1,14 @@
 package com.github.googelfist.moviesearcher.presentation.recycler
 
 import androidx.recyclerview.widget.DiffUtil
-import com.github.googelfist.moviesearcher.domain.model.MoviePreview
+import com.github.googelfist.moviesearcher.domain.model.MovieList
 
-class MoviePreviewDiffCallback : DiffUtil.ItemCallback<MoviePreview>() {
-    override fun areItemsTheSame(oldItem: MoviePreview, newItem: MoviePreview): Boolean {
+class MoviePreviewDiffCallback : DiffUtil.ItemCallback<MovieList>() {
+    override fun areItemsTheSame(oldItem: MovieList, newItem: MovieList): Boolean {
         return oldItem.kinopoiskId == newItem.kinopoiskId
     }
 
-    override fun areContentsTheSame(oldItem: MoviePreview, newItem: MoviePreview): Boolean {
-        return true
+    override fun areContentsTheSame(oldItem: MovieList, newItem: MovieList): Boolean {
+        return oldItem == newItem
     }
 }

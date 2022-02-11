@@ -13,7 +13,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 import javax.inject.Inject
 
-class DetailFragment : Fragment() {
+class MovieItemFragment : Fragment() {
 
     @Inject
     lateinit var mainViewModelFabric: MainViewModelFabric
@@ -45,14 +45,14 @@ class DetailFragment : Fragment() {
             it?.let { Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show() }
         }
 
-        mainViewModel.movieDetail.observe(viewLifecycleOwner) {
-            Picasso.get().load(it.posterUrl).into(binding.ivPreviewMovieImage)
-            binding.tvDetailCountry.text = it.country
-            binding.tvDetailMovieName.text = it.nameOriginal
-            binding.tvDetailGenre.text = it.genre
-            binding.tvDetailYear.text = it.year
-            binding.tvDetailDescription.text = it.description
-            binding.includeDetailFragmentRating.tvDetailRating.text = it.ratingKinopoisk
+        mainViewModel.movieItem.observe(viewLifecycleOwner) {
+            Picasso.get().load(it.posterUrl).into(binding.ivItemMovieImage)
+            binding.tvItemCountry.text = it.country
+            binding.tvItemMovieName.text = it.nameOriginal
+            binding.tvItemGenre.text = it.genre
+            binding.tvItemYear.text = it.year
+            binding.tvItemDescription.text = it.description
+            binding.includeItemFragmentRating.tvItemRating.text = it.ratingKinopoisk
         }
     }
 
@@ -63,8 +63,8 @@ class DetailFragment : Fragment() {
 
     companion object {
 
-        fun getNewInstance(): DetailFragment {
-            return DetailFragment()
+        fun getNewInstance(): MovieItemFragment {
+            return MovieItemFragment()
         }
     }
 }

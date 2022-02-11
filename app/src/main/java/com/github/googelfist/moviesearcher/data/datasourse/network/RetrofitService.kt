@@ -1,7 +1,7 @@
 package com.github.googelfist.moviesearcher.data.datasourse.network
 
-import com.github.googelfist.moviesearcher.data.datasourse.network.model.detail.MovieDetailDTO
-import com.github.googelfist.moviesearcher.data.datasourse.network.model.preview.MoviePreviewDTO
+import com.github.googelfist.moviesearcher.data.datasourse.network.model.item.MovieItemDTO
+import com.github.googelfist.moviesearcher.data.datasourse.network.model.list.MovieListDTO
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Path
@@ -15,14 +15,14 @@ interface RetrofitService {
         @Header(HEADER_CONTENT_TYPE) contentType: String,
         @Query(TYPE) type: String,
         @Query(PAGE) page: String
-    ): MoviePreviewDTO
+    ): MovieListDTO
 
     @GET("{id}")
     suspend fun getMovie(
         @Header(HEADER_API_KEY) authToken: String,
         @Header(HEADER_CONTENT_TYPE) contentType: String,
         @Path(PATH) id: Int
-    ): MovieDetailDTO
+    ): MovieItemDTO
 
     companion object {
         private const val HEADER_API_KEY = "X-API-KEY"

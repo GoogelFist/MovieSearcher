@@ -1,10 +1,10 @@
 package com.github.googelfist.moviesearcher.domain
 
-import com.github.googelfist.moviesearcher.domain.model.MovieDetail
-import com.github.googelfist.moviesearcher.domain.model.MoviePreview
+import com.github.googelfist.moviesearcher.domain.model.MovieItem
+import com.github.googelfist.moviesearcher.domain.model.MovieList
 
 interface Repository {
-    suspend fun loadPageTop250BestFilms(): List<MoviePreview>
+    suspend fun loadMovieList(): List<MovieList>
 
-    suspend fun loadMovieDetail(id: Int): MovieDetail
+    suspend fun loadMovieItem(id: Int): MovieItem
 }

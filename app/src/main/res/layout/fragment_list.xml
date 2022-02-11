@@ -6,12 +6,12 @@
         android:layout_height="match_parent">
 
     <TextView
-            android:id="@+id/tv_header"
+            android:id="@+id/tv_header_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:background="#FAFAFA"
-            android:text="@string/fragment_preview_header"
+            android:text="@string/fragment_list_header"
             android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -21,18 +21,18 @@
             app:layout_constraintVertical_bias="0.0" />
 
     <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_movies_preview"
+            android:id="@+id/rv_movies_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_header"
-            tools:listitem="@layout/movie_preview_cell" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_header_list"
+            tools:listitem="@layout/movie_list_cell" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_load"
+            android:id="@+id/fab_up_list"
             style="@style/Widget.Material3.FloatingActionButton.Surface"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
             app:layout_constraintEnd_toEndOf="parent" />
 
     <ProgressBar
-            android:id="@+id/pb_fragment_preview"
+            android:id="@+id/pb_fragment_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"

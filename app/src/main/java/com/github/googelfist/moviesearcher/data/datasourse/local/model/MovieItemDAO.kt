@@ -1,6 +1,11 @@
-package com.github.googelfist.moviesearcher.domain.model
+package com.github.googelfist.moviesearcher.data.datasourse.local.model
 
-data class MovieDetail(
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "movie_item")
+data class MovieItemDAO(
+    @PrimaryKey
     val kinopoiskId: Int,
     val nameRu: String,
     val nameEn: String,

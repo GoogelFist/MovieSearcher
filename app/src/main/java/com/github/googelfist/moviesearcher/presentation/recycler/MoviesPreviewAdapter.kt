@@ -5,16 +5,17 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.ListAdapter
 import com.github.googelfist.moviesearcher.R
-import com.github.googelfist.moviesearcher.domain.model.MoviePreview
+import com.github.googelfist.moviesearcher.domain.model.MovieList
 
 class MoviesPreviewAdapter :
-    ListAdapter<MoviePreview, MoviesPreviewViewHolder>(MoviePreviewDiffCallback()) {
+    ListAdapter<MovieList, MoviesPreviewViewHolder>(MoviePreviewDiffCallback()) {
 
     lateinit var onMoviePreviewClickListener: ((ImageView, Int) -> Unit)
+    lateinit var onScrolledToBottom: (() -> Unit)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MoviesPreviewViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.movie_preview_cell, parent, false)
+            .inflate(R.layout.movie_list_cell, parent, false)
         return MoviesPreviewViewHolder(view)
     }
 
@@ -24,5 +25,12 @@ class MoviesPreviewAdapter :
         holder.imagePreview.setOnClickListener {
             onMoviePreviewClickListener.invoke(it as ImageView, movie.kinopoiskId)
         }
+
+        if ((position >= itemCount - ONE_VALUE))
+            onScrolledToBottom.invoke()
+    }
+
+    companion object {
+        private const val ONE_VALUE = 1
     }
 }

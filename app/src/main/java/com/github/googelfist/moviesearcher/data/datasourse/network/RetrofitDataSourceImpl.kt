@@ -1,13 +1,13 @@
 package com.github.googelfist.moviesearcher.data.datasourse.network
 
 import com.github.googelfist.moviesearcher.data.datasourse.RemoteDataSource
-import com.github.googelfist.moviesearcher.data.datasourse.network.model.detail.MovieDetailDTO
-import com.github.googelfist.moviesearcher.data.datasourse.network.model.preview.MoviePreviewDTO
+import com.github.googelfist.moviesearcher.data.datasourse.network.model.item.MovieItemDTO
+import com.github.googelfist.moviesearcher.data.datasourse.network.model.list.MovieListDTO
 import javax.inject.Inject
 
 class RetrofitDataSourceImpl @Inject constructor(private val retrofitService: RetrofitService) :
     RemoteDataSource {
-    override suspend fun loadTop250BestFilms(page: Int): MoviePreviewDTO {
+    override suspend fun loadTop250BestFilms(page: Int): MovieListDTO {
         return retrofitService.getMovieList(
             authToken = AUTH_TOKEN,
             contentType = CONTENT_TYPE,
@@ -16,7 +16,7 @@ class RetrofitDataSourceImpl @Inject constructor(private val retrofitService: Re
         )
     }
 
-    override suspend fun loadMovieDetail(id: Int): MovieDetailDTO {
+    override suspend fun loadMovieItem(id: Int): MovieItemDTO {
         return retrofitService.getMovie(
             authToken = AUTH_TOKEN,
             contentType = CONTENT_TYPE,

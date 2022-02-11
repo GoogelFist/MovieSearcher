@@ -9,7 +9,7 @@
         app:cardBackgroundColor="#FAFAFA">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/scrollView2"
+            android:id="@+id/sv_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -19,7 +19,7 @@
             app:layout_constraintStart_toStartOf="parent">
 
         <TextView
-                android:id="@+id/tv_detail_movie_name"
+                android:id="@+id/tv_item_movie_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
@@ -31,21 +31,21 @@
                 tools:text="Avengers" />
 
         <androidx.cardview.widget.CardView
-                android:id="@+id/cv_detail_movie_image"
+                android:id="@+id/cv_item_movie_image"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginTop="16dp"
                 app:cardCornerRadius="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/tv_detail_movie_name"
-                app:layout_constraintTop_toBottomOf="@+id/tv_detail_movie_name">
+                app:layout_constraintStart_toStartOf="@+id/tv_item_movie_name"
+                app:layout_constraintTop_toBottomOf="@+id/tv_item_movie_name">
 
             <ImageView
-                    android:id="@+id/iv_preview_movie_image"
+                    android:id="@+id/iv_item_movie_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/movie_preview_image_description" />
+                    android:contentDescription="@string/movie_list_image_description" />
 
         </androidx.cardview.widget.CardView>
 
@@ -58,11 +58,11 @@
                 android:text="@string/tv_genres_fragment_item"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/tv_detail_movie_name"
-                app:layout_constraintTop_toBottomOf="@+id/cv_detail_movie_image" />
+                app:layout_constraintStart_toStartOf="@+id/tv_item_movie_name"
+                app:layout_constraintTop_toBottomOf="@+id/cv_item_movie_image" />
 
         <TextView
-                android:id="@+id/tv_detail_genre"
+                android:id="@+id/tv_item_genre"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -81,11 +81,11 @@
                 android:text="@string/tv_countries_fragment_item"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/tv_detail_movie_name"
-                app:layout_constraintTop_toBottomOf="@+id/tv_detail_genre" />
+                app:layout_constraintStart_toStartOf="@+id/tv_item_movie_name"
+                app:layout_constraintTop_toBottomOf="@+id/tv_item_genre" />
 
         <TextView
-                android:id="@+id/tv_detail_country"
+                android:id="@+id/tv_item_country"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -101,14 +101,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@string/tv_detail_movie_year"
+                android:text="@string/tv_item_movie_year"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/tv_detail_movie_name"
+                app:layout_constraintStart_toStartOf="@+id/tv_item_movie_name"
                 app:layout_constraintTop_toBottomOf="@+id/tv_countries" />
 
         <TextView
-                android:id="@+id/tv_detail_year"
+                android:id="@+id/tv_item_year"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -120,25 +120,25 @@
                 tools:text="Year" />
 
         <include
-                android:id="@+id/include_detail_fragment_rating"
-                layout="@layout/fragment_detail_rating"
+                android:id="@+id/include_item_fragment_rating"
+                layout="@layout/fragment_item_rating"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/tv_detail_movie_name"
+                app:layout_constraintStart_toStartOf="@+id/tv_item_movie_name"
                 app:layout_constraintTop_toBottomOf="@+id/tv_year" />
 
         <TextView
-                android:id="@+id/tv_detail_description"
+                android:id="@+id/tv_item_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/tv_detail_genre"
-                app:layout_constraintStart_toStartOf="@+id/tv_detail_movie_name"
-                app:layout_constraintTop_toBottomOf="@+id/include_detail_fragment_rating"
+                app:layout_constraintEnd_toEndOf="@+id/tv_item_genre"
+                app:layout_constraintStart_toStartOf="@+id/tv_item_movie_name"
+                app:layout_constraintTop_toBottomOf="@+id/include_item_fragment_rating"
                 tools:text="some text" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

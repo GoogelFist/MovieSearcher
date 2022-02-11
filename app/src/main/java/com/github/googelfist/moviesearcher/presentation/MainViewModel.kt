@@ -4,68 +4,67 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.googelfist.moviesearcher.data.LoadMovieDetailError
-import com.github.googelfist.moviesearcher.data.LoadTop250BestFilmsError
-import com.github.googelfist.moviesearcher.domain.LoadMovieDetailUseCase
-import com.github.googelfist.moviesearcher.domain.LoadPageTop250UseCase
-import com.github.googelfist.moviesearcher.domain.model.MovieDetail
-import com.github.googelfist.moviesearcher.domain.model.MoviePreview
+import com.github.googelfist.moviesearcher.data.RemoteLoadMovieItemError
+import com.github.googelfist.moviesearcher.data.RemoteLoadMovieListError
+import com.github.googelfist.moviesearcher.domain.LoadMovieItemUseCase
+import com.github.googelfist.moviesearcher.domain.LoadMovieListUseCase
+import com.github.googelfist.moviesearcher.domain.model.MovieItem
+import com.github.googelfist.moviesearcher.domain.model.MovieList
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class MainViewModel(
-    private val loadFirstPageTop250BestFilmsUseCase: LoadPageTop250UseCase,
-    private val loadMovieDetailUseCase: LoadMovieDetailUseCase
+    private val loadMovieListUseCase: LoadMovieListUseCase,
+    private val loadMovieItemUseCase: LoadMovieItemUseCase
 ) : ViewModel() {
 
     private var _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String>
         get() = _errorMessage
 
-    private var _movieList = MutableLiveData<List<MoviePreview>>()
-    val movieList: LiveData<List<MoviePreview>>
+    private var _movieList = MutableLiveData<List<MovieList>>()
+    val movieList: LiveData<List<MovieList>>
         get() = _movieList
 
-    private var _movieDetail = MutableLiveData<MovieDetail>()
-    val movieDetail: LiveData<MovieDetail>
+    private var _movieDetail = MutableLiveData<MovieItem>()
+    val movieItem: LiveData<MovieItem>
         get() = _movieDetail
 
-    private var _loading = MutableLiveData<Boolean>()
+    private var _loading = MutableLiveData<Boolean>(false)
     val loading: LiveData<Boolean>
         get() = _loading
 
 
-    fun onLoadPageTop250BestFilms() {
-        launchLoadMovies {
-            loadFirstPageTop250BestFilmsUseCase()
+    fun onLoadMovieList() {
+        launchLoadMovieList {
+            loadMovieListUseCase()
         }
     }
 
-    fun onLoadMovieDetail(id: Int) {
+    fun onLoadMovieItem(id: Int) {
         viewModelScope.launch {
             try {
-                val movieDetail = loadMovieDetailUseCase.invoke(id)
+                _loading.value = true
+                val movieDetail = loadMovieItemUseCase.invoke(id)
                 _movieDetail.value = movieDetail
+            } catch (error: RemoteLoadMovieItemError) {
+                _errorMessage.value = error.message
+            } finally {
                 _loading.value = false
-            } catch (error: LoadMovieDetailError) {
-                error.message?.let { onError(it) }
             }
         }
     }
 
-    private fun launchLoadMovies(block: suspend () -> List<MoviePreview>) : Job {
+    private fun launchLoadMovieList(block: suspend () -> List<MovieList>): Job {
         return viewModelScope.launch {
             try {
+                _loading.value = true
                 _movieList.value = block()
+            } catch (error: RemoteLoadMovieListError) {
+                _errorMessage.value = error.message
+            } finally {
                 _loading.value = false
-            } catch (error: LoadTop250BestFilmsError) {
-                error.message?.let { onError(it) }
             }
         }
-    }
-
-    private fun onError(message: String) {
-        _errorMessage.value = message
-        _loading.value = false
     }
 }
