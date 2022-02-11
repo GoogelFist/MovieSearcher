@@ -68,7 +68,7 @@ class MovieListFragment : Fragment() {
         moviesPreviewAdapter = MoviesPreviewAdapter()
         rvMoviesPreview.adapter = moviesPreviewAdapter
 
-        moviesPreviewAdapter.onScrolledToBottom = {
+        moviesPreviewAdapter.onScrolledToBottomListener = {
             mainViewModel.onLoadMovieList()
         }
     }
@@ -95,7 +95,7 @@ class MovieListFragment : Fragment() {
     }
 
     private fun setMoviePreviewOnClickListener() {
-        moviesPreviewAdapter.onMoviePreviewClickListener = { _, kinopoiskId ->
+        moviesPreviewAdapter.onMovieItemClickListener = { _, kinopoiskId ->
             mainViewModel.onLoadMovieItem(kinopoiskId)
 
             requireActivity().supportFragmentManager.commit {
