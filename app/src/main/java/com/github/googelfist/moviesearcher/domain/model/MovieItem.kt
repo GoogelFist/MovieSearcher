@@ -10,5 +10,6 @@ data class MovieItem(
     val year: String,
     val description: String,
     val country: String,
-    val genre: String?
+    val genre: String?,
+    val webUrl: String
 )
