@@ -22,29 +22,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:layout_marginEnd="16dp"
                 android:background="?attr/colorOnPrimary"
+                android:contentDescription="@string/button_web_intent_description"
+                android:minWidth="48dp"
+                android:minHeight="48dp"
                 android:src="@drawable/ic_baseline_internet_24"
-                android:contentDescription="@string/button_web_intent_description" />
+                tools:layout_editor_absoluteX="371dp"
+                tools:layout_editor_absoluteY="16dp" />
 
     </com.google.android.material.appbar.MaterialToolbar>
 
     <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:orientation="vertical"
             app:cardBackgroundColor="#FAFAFA"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tb_fragment_item_movie">
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/sv_item"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintBaseline_toBottomOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
+                android:layout_height="0dp"
+                android:orientation="vertical">
 
             <TextView
                     android:id="@+id/tv_item_movie_name"
