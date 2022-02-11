@@ -1,146 +1,176 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="8dp"
-        android:orientation="vertical"
-        app:cardBackgroundColor="#FAFAFA">
+        android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/sv_item"
+    <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/tb_fragment_item_movie"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorOnPrimary"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+        <ImageButton
+                android:id="@+id/ib_fragment_item_web_intent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginEnd="16dp"
+                android:background="?attr/colorOnPrimary"
+                android:src="@drawable/ic_baseline_internet_24"
+                android:contentDescription="@string/button_web_intent_description" />
+
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintBaseline_toBottomOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:cardBackgroundColor="#FAFAFA"
+            app:layout_constraintTop_toBottomOf="@+id/tb_fragment_item_movie">
 
-        <TextView
-                android:id="@+id/tv_item_movie_name"
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/sv_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:textSize="16sp"
-                android:textStyle="bold"
+                android:orientation="vertical"
+                app:layout_constraintBaseline_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Avengers" />
+                app:layout_constraintStart_toStartOf="parent">
 
-        <androidx.cardview.widget.CardView
-                android:id="@+id/cv_item_movie_image"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginTop="16dp"
-                app:cardCornerRadius="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/tv_item_movie_name"
-                app:layout_constraintTop_toBottomOf="@+id/tv_item_movie_name">
+            <TextView
+                    android:id="@+id/tv_item_movie_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Avengers" />
 
-            <ImageView
-                    android:id="@+id/iv_item_movie_image"
+            <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_item_movie_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="16dp"
+                    app:cardCornerRadius="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/tv_item_movie_name"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_item_movie_name">
+
+                <ImageView
+                        android:id="@+id/iv_item_movie_image"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/movie_list_image_description" />
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                    android:id="@+id/tv_genres"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/movie_list_image_description" />
+                    android:layout_marginTop="8dp"
+                    android:gravity="top"
+                    android:text="@string/tv_genres_fragment_item"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/tv_item_movie_name"
+                    app:layout_constraintTop_toBottomOf="@+id/cv_item_movie_image" />
 
-        </androidx.cardview.widget.CardView>
+            <TextView
+                    android:id="@+id/tv_item_genre"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textSize="14sp"
+                    app:cardUseCompatPadding="true"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/tv_genres"
+                    app:layout_constraintTop_toTopOf="@+id/tv_genres"
+                    tools:text="Comedy" />
 
-        <TextView
-                android:id="@+id/tv_genres"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="top"
-                android:text="@string/tv_genres_fragment_item"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/tv_item_movie_name"
-                app:layout_constraintTop_toBottomOf="@+id/cv_item_movie_image" />
+            <TextView
+                    android:id="@+id/tv_countries"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/tv_countries_fragment_item"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/tv_item_movie_name"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_item_genre" />
 
-        <TextView
-                android:id="@+id/tv_item_genre"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:textSize="14sp"
-                app:cardUseCompatPadding="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/tv_genres"
-                app:layout_constraintTop_toTopOf="@+id/tv_genres"
-                tools:text="Comedy" />
+            <TextView
+                    android:id="@+id/tv_item_country"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_countries"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/tv_countries"
+                    app:layout_constraintTop_toTopOf="@+id/tv_countries"
+                    tools:text="Countries" />
 
-        <TextView
-                android:id="@+id/tv_countries"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/tv_countries_fragment_item"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/tv_item_movie_name"
-                app:layout_constraintTop_toBottomOf="@+id/tv_item_genre" />
+            <TextView
+                    android:id="@+id/tv_year"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/tv_item_movie_year"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/tv_item_movie_name"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_countries" />
 
-        <TextView
-                android:id="@+id/tv_item_country"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_countries"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/tv_countries"
-                app:layout_constraintTop_toTopOf="@+id/tv_countries"
-                tools:text="Countries" />
+            <TextView
+                    android:id="@+id/tv_item_year"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_year"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/tv_year"
+                    app:layout_constraintTop_toTopOf="@+id/tv_year"
+                    tools:text="Year" />
 
-        <TextView
-                android:id="@+id/tv_year"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/tv_item_movie_year"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/tv_item_movie_name"
-                app:layout_constraintTop_toBottomOf="@+id/tv_countries" />
+            <include
+                    android:id="@+id/include_item_fragment_rating"
+                    layout="@layout/fragment_item_rating"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/tv_item_movie_name"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_year" />
 
-        <TextView
-                android:id="@+id/tv_item_year"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_year"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/tv_year"
-                app:layout_constraintTop_toTopOf="@+id/tv_year"
-                tools:text="Year" />
+            <TextView
+                    android:id="@+id/tv_item_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_item_genre"
+                    app:layout_constraintStart_toStartOf="@+id/tv_item_movie_name"
+                    app:layout_constraintTop_toBottomOf="@+id/include_item_fragment_rating"
+                    tools:text="some text" />
 
-        <include
-                android:id="@+id/include_item_fragment_rating"
-                layout="@layout/fragment_item_rating"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/tv_item_movie_name"
-                app:layout_constraintTop_toBottomOf="@+id/tv_year" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <TextView
-                android:id="@+id/tv_item_description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/tv_item_genre"
-                app:layout_constraintStart_toStartOf="@+id/tv_item_movie_name"
-                app:layout_constraintTop_toBottomOf="@+id/include_item_fragment_rating"
-                tools:text="some text" />
+    </ScrollView>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

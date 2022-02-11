@@ -7,4 +7,6 @@
     <string name="tv_countries_fragment_item">Countries:</string>
     <string name="tv_item_movie_year">Year:</string>
     <string name="tv_item_movie_rating">Rating:</string>
+    <string name="fragment_list_toolbar_title">Top 250 best films</string>
+    <string name="button_web_intent_description">Button for open movie url</string>
 </resources>
