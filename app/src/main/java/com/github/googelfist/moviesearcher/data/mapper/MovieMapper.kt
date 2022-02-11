@@ -73,7 +73,8 @@ class MovieMapper @Inject constructor() {
             year = dto.year.toString(),
             description = dto.description,
             country = formatCountries(dto.countries),
-            genre = formatGenres(dto.genres)
+            genre = formatGenres(dto.genres),
+            webUrl = dto.webUrl
         )
     }
 
@@ -88,7 +89,8 @@ class MovieMapper @Inject constructor() {
             year = movieItem.year,
             description = movieItem.description,
             country = movieItem.country,
-            genre = movieItem.genre
+            genre = movieItem.genre,
+            webUrl = movieItem.webUrl
         )
     }
 
@@ -103,7 +105,8 @@ class MovieMapper @Inject constructor() {
             year = movieItem.year,
             description = movieItem.description,
             country = movieItem.country,
-            genre = movieItem.genre
+            genre = movieItem.genre,
+            webUrl = movieItem.webUrl
         )
     }
 

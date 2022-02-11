@@ -73,7 +73,7 @@ class MovieItemFragment : Fragment() {
             binding.tvItemYear.text = it.year
             binding.tvItemDescription.text = it.description
             binding.includeItemFragmentRating.tvItemRating.text = it.ratingKinopoisk
-            setupWebIntent(it.posterUrl)
+            setupWebIntent(it.webUrl)
         }
     }
 

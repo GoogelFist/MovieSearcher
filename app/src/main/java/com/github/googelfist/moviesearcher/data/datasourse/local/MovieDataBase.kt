@@ -19,4 +19,4 @@ abstract class MovieDataBase : RoomDatabase() {
     abstract fun getMovieDao(): MovieDAO
 }
 
-private const val DB_VERSION = 5
+private const val DB_VERSION = 1
