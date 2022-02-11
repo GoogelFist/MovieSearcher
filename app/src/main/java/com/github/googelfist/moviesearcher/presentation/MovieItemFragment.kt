@@ -1,5 +1,6 @@
 package com.github.googelfist.moviesearcher.presentation
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -44,6 +45,7 @@ class MovieItemFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setOnSwipeListener()
         setupToolbar()
         observeViewModel()
     }
@@ -51,6 +53,15 @@ class MovieItemFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setOnSwipeListener() {
+        binding.svMovieItem.setOnTouchListener(object : OnSwipeTouchListener(requireActivity()) {
+            override fun onSwipeRight() {
+                requireActivity().supportFragmentManager.popBackStack()
+            }
+        })
     }
 
     private fun setupToolbar() {
