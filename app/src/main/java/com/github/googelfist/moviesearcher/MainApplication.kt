@@ -29,7 +29,7 @@ private fun setupWorkerManagerJob(context: Application) {
         .setRequiredNetworkType(NetworkType.UNMETERED)
         .build()
 
-    val work = PeriodicWorkRequestBuilder<RefreshMainDataWork>(15, TimeUnit.MINUTES)
+    val work = PeriodicWorkRequestBuilder<RefreshMainDataWork>(1, TimeUnit.DAYS)
         .setConstraints(constraints)
         .build()
 
