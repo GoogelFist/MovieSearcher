@@ -24,7 +24,7 @@ class RepositoryImp @Inject constructor(
 
         top250PageCount = localLoadPageCount()
         if (top250PageCount == PAGE_COUNT_ZERO) {
-            top250PageCount = updatePageCount()
+            top250PageCount = getUpdatedPageCount()
         }
 
         when {
@@ -35,7 +35,9 @@ class RepositoryImp @Inject constructor(
                     increasePageNumber()
                     return previewMovies.toList()
                 }
-                movies = updateMovieList(PAGE_COUNT_ONE)
+                updateMovieList(PAGE_COUNT_ONE)
+
+                movies = localLoadMovieList(PAGE_COUNT_ONE)
                 previewMovies = movies as MutableList<MovieList>
                 increasePageNumber()
             }
@@ -46,7 +48,9 @@ class RepositoryImp @Inject constructor(
                     increasePageNumber()
                     return previewMovies.toList()
                 }
-                movies = updateMovieList(pageNumber)
+                updateMovieList(pageNumber)
+
+                movies = localLoadMovieList(pageNumber) ?: throw RuntimeException("Movies is not present")
                 previewMovies.addAll(movies)
                 increasePageNumber()
             }
@@ -55,15 +59,23 @@ class RepositoryImp @Inject constructor(
     }
 
     override suspend fun loadMovieItem(id: Int): MovieItem {
-        val movieItem = localLoadMovieItem(id)
-        movieItem?.let { return movieItem }
-        return updateMovieItem(id)
+        var movieItem = localLoadMovieItem(id)
+        movieItem?.let { return it }
+
+        updateMovieItem(id)
+
+        movieItem = localLoadMovieItem(id)
+        return movieItem ?: throw RuntimeException("Movie item is not present")
     }
 
-    private suspend fun updateMovieList(page: Int): List<MovieList> {
+    override suspend fun updateMovieList(page: Int) {
         val remoteMovieList = remoteLoadMovieList(page)
         localSaveMovieList(remoteMovieList)
-        return remoteMovieList
+    }
+
+    override suspend fun updateMovieItem(id: Int) {
+        val remoteMovieItem = remoteLoadMovieItem(id)
+        localSaveMovieItem(remoteMovieItem)
     }
 
     private suspend fun localLoadMovieList(page: Int): List<MovieList>? {
@@ -87,12 +99,6 @@ class RepositoryImp @Inject constructor(
         localDataSource.insertMoviePageList(moviePageListDAO)
     }
 
-    private suspend fun updateMovieItem(id: Int): MovieItem {
-        val remoteMovieItem = remoteLoadMovieItem(id)
-        localSaveMovieItem(remoteMovieItem)
-        return remoteMovieItem
-    }
-
     private suspend fun localLoadMovieItem(id: Int): MovieItem? {
         val localResult = localDataSource.loadMovieItem(id)
         localResult?.let { return mapper.mapMovieItemDAOToMovieItem(it) }
@@ -114,7 +120,7 @@ class RepositoryImp @Inject constructor(
         localDataSource.insertMovieItem(movieItemDAO)
     }
 
-    private suspend fun updatePageCount(): Int {
+    private suspend fun getUpdatedPageCount(): Int {
         val pageCount = remoteDataSource.loadMovieList(PAGE_COUNT_ONE).pagesCount
         localSavePageCountDAO(pageCount)
         return pageCount
