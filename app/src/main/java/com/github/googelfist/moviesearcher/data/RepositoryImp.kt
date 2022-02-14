@@ -7,6 +7,9 @@ import com.github.googelfist.moviesearcher.data.mapper.MovieMapper
 import com.github.googelfist.moviesearcher.domain.Repository
 import com.github.googelfist.moviesearcher.domain.model.MovieItem
 import com.github.googelfist.moviesearcher.domain.model.MovieList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class RepositoryImp @Inject constructor(
@@ -22,10 +25,7 @@ class RepositoryImp @Inject constructor(
 
     override suspend fun loadMovieList(): List<MovieList> {
 
-        top250PageCount = localLoadPageCount()
-        if (top250PageCount == PAGE_COUNT_ZERO) {
-            top250PageCount = getUpdatedPageCount()
-        }
+        top250PageCount = loadPageCount()
 
         when {
             pageNumber == PAGE_COUNT_ONE -> {
@@ -70,20 +70,36 @@ class RepositoryImp @Inject constructor(
         return movieItem ?: throw RuntimeException("Movie item is not present")
     }
 
-    override suspend fun updateMovieList(page: Int) {
-        val remoteMovieList = remoteLoadMovieList(page)
-        localSaveMovieList(remoteMovieList)
+    override suspend fun loadPageCount(): Int {
+        val pageCount = localLoadPageCount()
+        if (pageCount == PAGE_COUNT_ZERO) {
+            return getUpdatedPageCount()
+        }
+        return pageCount
     }
 
-    override suspend fun updateMovieItem(id: Int) {
-        val remoteMovieItem = remoteLoadMovieItem(id)
-        localSaveMovieItem(remoteMovieItem)
+    override suspend fun refreshLocalData(page: Int) {
+        val remoteMovieList = remoteLoadMovieList(page)
+        localSaveMovieList(page, remoteMovieList)
+        withContext(Dispatchers.IO) {
+            for (item in remoteMovieList) {
+                val itemId = item.kinopoiskId
+                val remoteLoadMovieItem = remoteLoadMovieItem(itemId)
+                localSaveMovieItem(remoteLoadMovieItem)
+                delay(300)
+            }
+        }
     }
 
     private suspend fun localLoadMovieList(page: Int): List<MovieList>? {
         val result = localDataSource.loadMoviePageList(page)
         result?.let { return mapper.mapMoviePageListDAOtoMovieList(it) }
         return null
+    }
+
+    private suspend fun updateMovieList(page: Int) {
+        val remoteMovieList = remoteLoadMovieList(page)
+        localSaveMovieList(page, remoteMovieList)
     }
 
     private suspend fun remoteLoadMovieList(page: Int): List<MovieList> {
@@ -96,7 +112,7 @@ class RepositoryImp @Inject constructor(
         }
     }
 
-    private suspend fun localSaveMovieList(movieList: List<MovieList>) {
+    private suspend fun localSaveMovieList(pageNumber: Int, movieList: List<MovieList>) {
         val moviePageListDAO = mapper.mapMovieListToMoviePageListDAO(pageNumber, movieList)
         localDataSource.insertMoviePageList(moviePageListDAO)
     }
@@ -105,6 +121,11 @@ class RepositoryImp @Inject constructor(
         val localResult = localDataSource.loadMovieItem(id)
         localResult?.let { return mapper.mapMovieItemDAOToMovieItem(it) }
         return null
+    }
+
+    private suspend fun updateMovieItem(id: Int) {
+        val remoteMovieItem = remoteLoadMovieItem(id)
+        localSaveMovieItem(remoteMovieItem)
     }
 
     private suspend fun remoteLoadMovieItem(id: Int): MovieItem {
@@ -123,9 +144,13 @@ class RepositoryImp @Inject constructor(
     }
 
     private suspend fun getUpdatedPageCount(): Int {
-        val pageCount = remoteDataSource.loadMovieList(PAGE_COUNT_ONE).pagesCount
-        localSavePageCountDAO(pageCount)
-        return pageCount
+        try {
+            val pageCount = remoteDataSource.loadMovieList(PAGE_COUNT_ONE).pagesCount
+            localSavePageCountDAO(pageCount)
+            return pageCount
+        } catch (error: Throwable) {
+            throw RemoteLoadPageCountError("Unable to load page count", error)
+        }
     }
 
     private suspend fun localLoadPageCount(): Int {
@@ -148,5 +173,7 @@ class RepositoryImp @Inject constructor(
     }
 }
 
-class RemoteLoadMovieListError(message: String, cause: Throwable) : Throwable(message, cause)
-class RemoteLoadMovieItemError(message: String, cause: Throwable) : Throwable(message, cause)
+open class RemoteLoadError(message: String, cause: Throwable) : Throwable(message, cause)
+class RemoteLoadMovieListError(message: String, cause: Throwable) : RemoteLoadError(message, cause)
+class RemoteLoadMovieItemError(message: String, cause: Throwable) : RemoteLoadError(message, cause)
+class RemoteLoadPageCountError(message: String, cause: Throwable) : RemoteLoadError(message, cause)

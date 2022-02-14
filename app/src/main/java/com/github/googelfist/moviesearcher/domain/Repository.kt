@@ -8,7 +8,7 @@ interface Repository {
 
     suspend fun loadMovieItem(id: Int): MovieItem
 
-    suspend fun updateMovieList(page: Int)
+    suspend fun loadPageCount(): Int
 
-    suspend fun updateMovieItem(id: Int)
+    suspend fun refreshLocalData(page: Int)
 }
