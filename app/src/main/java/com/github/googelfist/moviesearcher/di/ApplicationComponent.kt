@@ -1,6 +1,7 @@
 package com.github.googelfist.moviesearcher.di
 
 import android.app.Application
+import com.github.googelfist.moviesearcher.data.RefreshMainDataWork
 import com.github.googelfist.moviesearcher.presentation.MovieItemFragment
 import com.github.googelfist.moviesearcher.presentation.MovieListFragment
 import dagger.BindsInstance
@@ -14,6 +15,8 @@ interface ApplicationComponent {
     fun inject(movieListFragment: MovieListFragment)
 
     fun inject(movieItemFragment: MovieItemFragment)
+
+    fun inject(refreshMainDataWork: RefreshMainDataWork)
 
     @Component.Builder
     interface Builder {
