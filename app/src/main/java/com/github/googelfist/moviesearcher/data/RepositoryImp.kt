@@ -3,7 +3,6 @@ package com.github.googelfist.moviesearcher.data
 import com.github.googelfist.moviesearcher.data.datasourse.LocalDataSource
 import com.github.googelfist.moviesearcher.data.datasourse.RemoteDataSource
 import com.github.googelfist.moviesearcher.data.datasourse.local.model.PageCountDAO
-import com.github.googelfist.moviesearcher.data.datasourse.network.model.list.MovieListDTO
 import com.github.googelfist.moviesearcher.data.mapper.MovieMapper
 import com.github.googelfist.moviesearcher.domain.Repository
 import com.github.googelfist.moviesearcher.domain.model.MovieItem
@@ -23,16 +22,31 @@ class RepositoryImp @Inject constructor(
 
     override suspend fun loadMovieList(): List<MovieList> {
 
-        top250PageCount = updatePageCount()
+        top250PageCount = localLoadPageCount()
+        if (top250PageCount == PAGE_COUNT_ZERO) {
+            top250PageCount = updatePageCount()
+        }
 
         when {
             pageNumber == PAGE_COUNT_ONE -> {
-                val movies = updateMovieList(PAGE_COUNT_ONE)
+                var movies = localLoadMovieList(PAGE_COUNT_ONE)
+                movies?.let {
+                    previewMovies = it as MutableList<MovieList>
+                    increasePageNumber()
+                    return previewMovies.toList()
+                }
+                movies = updateMovieList(PAGE_COUNT_ONE)
                 previewMovies = movies as MutableList<MovieList>
                 increasePageNumber()
             }
             pageNumber < top250PageCount -> {
-                val movies = updateMovieList(pageNumber)
+                var movies = localLoadMovieList(pageNumber)
+                movies?.let {
+                    previewMovies.addAll(it)
+                    increasePageNumber()
+                    return previewMovies.toList()
+                }
+                movies = updateMovieList(pageNumber)
                 previewMovies.addAll(movies)
                 increasePageNumber()
             }
@@ -41,24 +55,26 @@ class RepositoryImp @Inject constructor(
     }
 
     override suspend fun loadMovieItem(id: Int): MovieItem {
+        val movieItem = localLoadMovieItem(id)
+        movieItem?.let { return movieItem }
         return updateMovieItem(id)
     }
 
     private suspend fun updateMovieList(page: Int): List<MovieList> {
-        val result = localDataSource.loadMoviePageList(page)
-        result?.let {
-            return mapper.mapMoviePageListDAOtoMovieList(it)
-        }
         val remoteMovieList = remoteLoadMovieList(page)
         localSaveMovieList(remoteMovieList)
         return remoteMovieList
     }
 
+    private suspend fun localLoadMovieList(page: Int): List<MovieList>? {
+        val result = localDataSource.loadMoviePageList(page)
+        result?.let { return mapper.mapMoviePageListDAOtoMovieList(it) }
+        return null
+    }
+
     private suspend fun remoteLoadMovieList(page: Int): List<MovieList> {
         try {
-            val result = remoteDataSource.loadTop250BestFilms(page)
-
-            localSavePageCountDAO(result)
+            val result = remoteDataSource.loadMovieList(page)
 
             return mapper.mapMovieListDTOtoMovieList(result)
         } catch (error: Throwable) {
@@ -72,13 +88,15 @@ class RepositoryImp @Inject constructor(
     }
 
     private suspend fun updateMovieItem(id: Int): MovieItem {
-        val localResult = localDataSource.loadMovieItem(id)
-        localResult?.let {
-            return mapper.mapMovieItemDAOToMovieItem(it)
-        }
         val remoteMovieItem = remoteLoadMovieItem(id)
         localSaveMovieItem(remoteMovieItem)
         return remoteMovieItem
+    }
+
+    private suspend fun localLoadMovieItem(id: Int): MovieItem? {
+        val localResult = localDataSource.loadMovieItem(id)
+        localResult?.let { return mapper.mapMovieItemDAOToMovieItem(it) }
+        return null
     }
 
     private suspend fun remoteLoadMovieItem(id: Int): MovieItem {
@@ -97,15 +115,18 @@ class RepositoryImp @Inject constructor(
     }
 
     private suspend fun updatePageCount(): Int {
+        val pageCount = remoteDataSource.loadMovieList(PAGE_COUNT_ONE).pagesCount
+        localSavePageCountDAO(pageCount)
+        return pageCount
+    }
+
+    private suspend fun localLoadPageCount(): Int {
         val pageCountDAO = localDataSource.loadPageCount()
-        pageCountDAO?.let {
-            return pageCountDAO.pageCount
-        }
+        pageCountDAO?.let { return it.pageCount }
         return PAGE_COUNT_ZERO
     }
 
-    private suspend fun localSavePageCountDAO(result: MovieListDTO) {
-        val pageCount = result.pagesCount
+    private suspend fun localSavePageCountDAO(pageCount: Int) {
         localDataSource.insertPageCount(PageCountDAO(pageCount))
     }
 
