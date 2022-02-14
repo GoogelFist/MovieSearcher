@@ -38,6 +38,7 @@ class RepositoryImp @Inject constructor(
                 updateMovieList(PAGE_COUNT_ONE)
 
                 movies = localLoadMovieList(PAGE_COUNT_ONE)
+                    ?: throw RuntimeException("Movies is not present")
                 previewMovies = movies as MutableList<MovieList>
                 increasePageNumber()
             }
@@ -50,7 +51,8 @@ class RepositoryImp @Inject constructor(
                 }
                 updateMovieList(pageNumber)
 
-                movies = localLoadMovieList(pageNumber) ?: throw RuntimeException("Movies is not present")
+                movies = localLoadMovieList(pageNumber)
+                    ?: throw RuntimeException("Movies is not present")
                 previewMovies.addAll(movies)
                 increasePageNumber()
             }
