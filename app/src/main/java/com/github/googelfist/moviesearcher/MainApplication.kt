@@ -7,9 +7,9 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.github.googelfist.moviesearcher.data.RefreshMainDataWork
 import com.github.googelfist.moviesearcher.di.ApplicationComponent
 import com.github.googelfist.moviesearcher.di.DaggerApplicationComponent
-import com.github.googelfist.moviesearcher.data.RefreshMainDataWork
 import java.util.concurrent.TimeUnit
 
 class MainApplication : Application() {
@@ -29,7 +29,7 @@ private fun setupWorkerManagerJob(context: Application) {
         .setRequiredNetworkType(NetworkType.UNMETERED)
         .build()
 
-    val work = PeriodicWorkRequestBuilder<RefreshMainDataWork>(1, TimeUnit.DAYS)
+    val work = PeriodicWorkRequestBuilder<RefreshMainDataWork>(REPEAT_INTERVAL, TimeUnit.DAYS)
         .setConstraints(constraints)
         .build()
 
@@ -46,3 +46,5 @@ val Context.component: ApplicationComponent
         is MainApplication -> appComponent
         else -> this.applicationContext.component
     }
+
+private const val REPEAT_INTERVAL = 1L
