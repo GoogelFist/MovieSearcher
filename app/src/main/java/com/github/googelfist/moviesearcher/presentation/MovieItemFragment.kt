@@ -28,9 +28,16 @@ class MovieItemFragment : Fragment() {
 
     private val mainViewModel by activityViewModels<MainViewModel> { mainViewModelFabric }
 
+    private var movieId = DEFAULT_MOVIE_ID
+
     override fun onAttach(context: Context) {
         requireActivity().component.inject(this)
         super.onAttach(context)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        parseParams()
     }
 
     override fun onCreateView(
@@ -44,7 +51,7 @@ class MovieItemFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        mainViewModel.onLoadMovieItem(movieId)
         setOnSwipeListener()
         setupToolbar()
         observeViewModel()
@@ -52,7 +59,16 @@ class MovieItemFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        mainViewModel.onClearMovieItemLiveData()
         _binding = null
+    }
+
+    private fun parseParams() {
+        val args = requireArguments()
+        if (!args.containsKey(KEY_ID)) {
+            throw IllegalArgumentException("Movie id is absent")
+        }
+        movieId = args.getInt(KEY_ID)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -77,14 +93,16 @@ class MovieItemFragment : Fragment() {
         }
 
         mainViewModel.movieItem.observe(viewLifecycleOwner) {
-            Picasso.get().load(it.posterUrl).into(binding.ivItemMovieImage)
-            binding.tvItemCountry.text = it.country
-            binding.tvItemMovieName.text = it.nameOriginal
-            binding.tvItemGenre.text = it.genre
-            binding.tvItemYear.text = it.year
-            binding.tvItemDescription.text = it.description
-            binding.includeItemFragmentRating.tvItemRating.text = it.ratingKinopoisk
-            setupWebIntent(it.webUrl)
+            it?.let {
+                Picasso.get().load(it.posterUrl).into(binding.ivItemMovieImage)
+                binding.tvItemCountry.text = it.country
+                binding.tvItemMovieName.text = it.nameOriginal
+                binding.tvItemGenre.text = it.genre
+                binding.tvItemYear.text = it.year
+                binding.tvItemDescription.text = it.description
+                binding.includeItemFragmentRating.tvItemRating.text = it.ratingKinopoisk
+                setupWebIntent(it.webUrl)
+            }
         }
     }
 
@@ -97,9 +115,15 @@ class MovieItemFragment : Fragment() {
     }
 
     companion object {
+        private const val KEY_ID = "key id"
+        private const val DEFAULT_MOVIE_ID = 0
 
-        fun getNewInstance(): MovieItemFragment {
-            return MovieItemFragment()
+        fun getNewInstance(id: Int): MovieItemFragment {
+            return MovieItemFragment().apply {
+                arguments = Bundle().apply {
+                    putInt(KEY_ID, id)
+                }
+            }
         }
     }
 }

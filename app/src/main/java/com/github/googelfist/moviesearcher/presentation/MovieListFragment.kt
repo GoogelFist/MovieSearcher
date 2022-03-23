@@ -73,7 +73,6 @@ class MovieListFragment : Fragment() {
         }
     }
 
-
     private fun observeViewModel(view: View) {
         mainViewModel.movieList.observe(viewLifecycleOwner) { moviesPreviewAdapter.submitList(it) }
 
@@ -96,7 +95,6 @@ class MovieListFragment : Fragment() {
 
     private fun setMoviePreviewOnClickListener() {
         moviesPreviewAdapter.onMovieItemClickListener = { _, kinopoiskId ->
-            mainViewModel.onLoadMovieItem(kinopoiskId)
 
             requireActivity().supportFragmentManager.commit {
                 setCustomAnimations(
@@ -107,7 +105,7 @@ class MovieListFragment : Fragment() {
                 )
                 replace(
                     R.id.fragment_container,
-                    MovieItemFragment.getNewInstance()
+                    MovieItemFragment.getNewInstance(kinopoiskId)
                 )
                 setReorderingAllowed(true)
                 addToBackStack(null)

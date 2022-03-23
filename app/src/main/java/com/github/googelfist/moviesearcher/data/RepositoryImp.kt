@@ -1,10 +1,7 @@
 package com.github.googelfist.moviesearcher.data
 
-import android.util.Log
 import com.github.googelfist.moviesearcher.data.datasourse.LocalDataSource
 import com.github.googelfist.moviesearcher.data.datasourse.RemoteDataSource
-import com.github.googelfist.moviesearcher.data.datasourse.local.model.PageCountDAO
-import com.github.googelfist.moviesearcher.data.mapper.MovieMapper
 import com.github.googelfist.moviesearcher.domain.Repository
 import com.github.googelfist.moviesearcher.domain.model.MovieItem
 import com.github.googelfist.moviesearcher.domain.model.MovieList
@@ -60,14 +57,16 @@ class RepositoryImp @Inject constructor(
         return previewMovies.toList()
     }
 
-    override suspend fun loadMovieItem(id: Int): MovieItem {
-        var movieItem = localLoadMovieItem(id)
+    override suspend fun loadMovieItem(id: Int): MovieItem? {
+        val movieItem = localLoadMovieItem(id)
         movieItem?.let { return it }
 
-        updateMovieItem(id)
-
-        movieItem = localLoadMovieItem(id)
-        return movieItem ?: throw RuntimeException("Movie item is not present")
+        val remoteMovieItem = remoteLoadMovieItem(id)
+        remoteMovieItem?.let {
+            localSaveMovieItem(remoteMovieItem)
+            return remoteMovieItem
+        }
+        return null
     }
 
     override suspend fun loadPageCount(): Int {
@@ -85,7 +84,9 @@ class RepositoryImp @Inject constructor(
             for (item in remoteMovieList) {
                 val itemId = item.kinopoiskId
                 val remoteLoadMovieItem = remoteLoadMovieItem(itemId)
-                localSaveMovieItem(remoteLoadMovieItem)
+                remoteLoadMovieItem?.let {
+                    localSaveMovieItem(remoteLoadMovieItem)
+                }
                 delay(300)
             }
         }
@@ -116,16 +117,11 @@ class RepositoryImp @Inject constructor(
         return localDataSource.loadMovieItem(id)
     }
 
-    private suspend fun updateMovieItem(id: Int) {
-        val remoteMovieItem = remoteLoadMovieItem(id)
-        localSaveMovieItem(remoteMovieItem)
-    }
-
-    private suspend fun remoteLoadMovieItem(id: Int): MovieItem {
-        try {
-            return remoteDataSource.loadMovieItem(id)
+    private suspend fun remoteLoadMovieItem(id: Int): MovieItem? {
+        return try {
+            remoteDataSource.loadMovieItem(id)
         } catch (error: Throwable) {
-            throw RemoteLoadMovieItemError("Unable to load movie detail", error)
+            null
         }
     }
 
@@ -139,7 +135,6 @@ class RepositoryImp @Inject constructor(
             localSavePageCountDAO(pageCount)
             return pageCount
         } catch (error: Throwable) {
-            Log.e("Error", error.toString())
             throw RemoteLoadPageCountError("Unable to load page count", error)
         }
     }
@@ -165,5 +160,4 @@ class RepositoryImp @Inject constructor(
 
 open class RemoteLoadError(message: String, cause: Throwable) : Throwable(message, cause)
 class RemoteLoadMovieListError(message: String, cause: Throwable) : RemoteLoadError(message, cause)
-class RemoteLoadMovieItemError(message: String, cause: Throwable) : RemoteLoadError(message, cause)
 class RemoteLoadPageCountError(message: String, cause: Throwable) : RemoteLoadError(message, cause)

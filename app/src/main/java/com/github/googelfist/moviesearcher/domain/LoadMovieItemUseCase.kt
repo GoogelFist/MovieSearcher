@@ -5,7 +5,7 @@ import javax.inject.Inject
 
 class LoadMovieItemUseCase @Inject constructor(private val repository: Repository) {
 
-    suspend operator fun invoke(id: Int): MovieItem {
+    suspend operator fun invoke(id: Int): MovieItem? {
         return repository.loadMovieItem(id)
     }
 }

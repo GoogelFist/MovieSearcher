@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.googelfist.moviesearcher.data.RemoteLoadMovieItemError
+import com.github.googelfist.moviesearcher.data.RemoteLoadError
 import com.github.googelfist.moviesearcher.data.RemoteLoadMovieListError
 import com.github.googelfist.moviesearcher.domain.LoadMovieItemUseCase
 import com.github.googelfist.moviesearcher.domain.LoadMovieListUseCase
@@ -18,19 +18,19 @@ class MainViewModel(
     private val loadMovieItemUseCase: LoadMovieItemUseCase
 ) : ViewModel() {
 
-    private var _errorMessage = MutableLiveData<String>()
-    val errorMessage: LiveData<String>
+    private var _errorMessage = MutableLiveData<String?>()
+    val errorMessage: LiveData<String?>
         get() = _errorMessage
 
     private var _movieList = MutableLiveData<List<MovieList>>()
     val movieList: LiveData<List<MovieList>>
         get() = _movieList
 
-    private var _movieDetail = MutableLiveData<MovieItem>()
-    val movieItem: LiveData<MovieItem>
-        get() = _movieDetail
+    private var _movieItem = MutableLiveData<MovieItem?>()
+    val movieItem: LiveData<MovieItem?>
+        get() = _movieItem
 
-    private var _loading = MutableLiveData<Boolean>(false)
+    private var _loading = MutableLiveData(false)
     val loading: LiveData<Boolean>
         get() = _loading
 
@@ -46,8 +46,9 @@ class MainViewModel(
             try {
                 _loading.value = true
                 val movieDetail = loadMovieItemUseCase.invoke(id)
-                _movieDetail.value = movieDetail
-            } catch (error: RemoteLoadMovieItemError) {
+                _movieItem.value = movieDetail
+                _errorMessage.value = null
+            } catch (error: Exception) {
                 _errorMessage.value = error.message
             } finally {
                 _loading.value = false
@@ -55,12 +56,19 @@ class MainViewModel(
         }
     }
 
+    fun onClearMovieItemLiveData() {
+        _movieItem.value = null
+    }
+
     private fun launchLoadMovieList(block: suspend () -> List<MovieList>): Job {
         return viewModelScope.launch {
             try {
                 _loading.value = true
                 _movieList.value = block()
+                _errorMessage.value = null
             } catch (error: RemoteLoadMovieListError) {
+                _errorMessage.value = error.message
+            } catch (error: RemoteLoadError) {
                 _errorMessage.value = error.message
             } finally {
                 _loading.value = false

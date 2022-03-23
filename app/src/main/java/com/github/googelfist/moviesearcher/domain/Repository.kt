@@ -6,7 +6,7 @@ import com.github.googelfist.moviesearcher.domain.model.MovieList
 interface Repository {
     suspend fun loadMovieList(): List<MovieList>
 
-    suspend fun loadMovieItem(id: Int): MovieItem
+    suspend fun loadMovieItem(id: Int): MovieItem?
 
     suspend fun loadPageCount(): Int
 
