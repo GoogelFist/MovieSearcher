@@ -17,4 +17,8 @@ interface LocalDataSource {
     suspend fun loadPageCount(): Int
 
     suspend fun insertPageCount(pageCount: Int)
+
+    suspend fun loadPageNumber(): Int
+
+    suspend fun insertPageNumber(pageNumber: Int)
 }

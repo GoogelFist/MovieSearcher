@@ -15,36 +15,22 @@ class RepositoryImp @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
     private val localDataSource: LocalDataSource
 ) : Repository {
-    private var pageNumber: Int = PAGE_COUNT_ONE
-    private var totalPageCount: Int = PAGE_COUNT_ZERO
 
     override suspend fun fetchMovieList() {
-        totalPageCount = loadPageCount()
+        val totalPageCount = loadPageCount()
+        var pageNumber = loadPageNumber()
 
-        if (pageNumber < totalPageCount) {
+        if (pageNumber <= totalPageCount) {
             val remoteMovieList = remoteLoadMovieList(pageNumber)
             localSaveMovieList(pageNumber, remoteMovieList)
-            increasePageNumber()
+            pageNumber++
+            localSavePageNumberDAO(pageNumber)
         }
-
-//        when {
-//            pageNumber == PAGE_COUNT_ONE -> {
-//                val remoteMovieList = remoteLoadMovieList(pageNumber)
-//                localSaveMovieList(pageNumber, remoteMovieList)
-//                increasePageNumber()
-//            }
-//            pageNumber < totalPageCount -> {
-//                val remoteMovieList = remoteLoadMovieList(pageNumber)
-//                localSaveMovieList(pageNumber, remoteMovieList)
-//                increasePageNumber()
-//            }
-//        }
     }
 
     override fun loadMovieList(): LiveData<List<MovieList>> {
         return localDataSource.loadAllMovieLists()
     }
-
 
     override suspend fun loadMovieItem(id: Int): MovieItem? {
         val movieItem = localLoadMovieItem(id)
@@ -59,7 +45,7 @@ class RepositoryImp @Inject constructor(
     }
 
     override suspend fun loadPageCount(): Int {
-        val pageCount = localLoadPageCount()
+        val pageCount = localDataSource.loadPageCount()
         if (pageCount == PAGE_COUNT_ZERO) {
             return getUpdatedPageCount()
         }
@@ -119,16 +105,17 @@ class RepositoryImp @Inject constructor(
         }
     }
 
-    private suspend fun localLoadPageCount(): Int {
-        return localDataSource.loadPageCount()
-    }
 
     private suspend fun localSavePageCountDAO(pageCount: Int) {
         localDataSource.insertPageCount(pageCount)
     }
 
-    private fun increasePageNumber() {
-        pageNumber++
+    private suspend fun loadPageNumber(): Int {
+        return localDataSource.loadPageNumber()
+    }
+
+    private suspend fun localSavePageNumberDAO(pageNumber: Int) {
+        localDataSource.insertPageNumber(pageNumber)
     }
 
     companion object {

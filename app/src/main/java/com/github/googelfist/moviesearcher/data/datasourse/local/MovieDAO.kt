@@ -9,6 +9,7 @@ import com.github.googelfist.moviesearcher.data.datasourse.local.model.MovieItem
 import com.github.googelfist.moviesearcher.data.datasourse.local.model.MovieListDAO
 import com.github.googelfist.moviesearcher.data.datasourse.local.model.MoviePageListDAO
 import com.github.googelfist.moviesearcher.data.datasourse.local.model.PageCountDAO
+import com.github.googelfist.moviesearcher.data.datasourse.local.model.PageNumberDAO
 
 @Dao
 interface MovieDAO {
@@ -24,9 +25,15 @@ interface MovieDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMovieItem(movieItemDAO: MovieItemDAO)
 
-    @Query("SELECT pageCount FROM page_count")
-    suspend fun loadPageCount(): PageCountDAO?
+    @Query("SELECT * FROM page_count WHERE id = :id")
+    suspend fun loadPageCountById(id: Int): PageCountDAO?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPageCount(pageCount: PageCountDAO)
+
+    @Query("SELECT * FROM page_number WHERE id = :id")
+    suspend fun loadPageNumberById(id: Int): PageNumberDAO?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPageNumber(pageNumberDAO: PageNumberDAO)
 }

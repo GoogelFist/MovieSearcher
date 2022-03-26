@@ -7,9 +7,10 @@ import com.github.googelfist.moviesearcher.data.datasourse.local.model.MovieItem
 import com.github.googelfist.moviesearcher.data.datasourse.local.model.MovieListDAO
 import com.github.googelfist.moviesearcher.data.datasourse.local.model.MoviePageListDAO
 import com.github.googelfist.moviesearcher.data.datasourse.local.model.PageCountDAO
+import com.github.googelfist.moviesearcher.data.datasourse.local.model.PageNumberDAO
 
 @Database(
-    entities = [MovieItemDAO::class, MovieListDAO::class, MoviePageListDAO::class, PageCountDAO::class],
+    entities = [MovieItemDAO::class, MovieListDAO::class, MoviePageListDAO::class, PageCountDAO::class, PageNumberDAO::class],
     version = DB_VERSION,
     exportSchema = false
 )
