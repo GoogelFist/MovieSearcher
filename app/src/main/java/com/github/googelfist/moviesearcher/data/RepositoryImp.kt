@@ -1,5 +1,6 @@
 package com.github.googelfist.moviesearcher.data
 
+import androidx.lifecycle.LiveData
 import com.github.googelfist.moviesearcher.data.datasourse.LocalDataSource
 import com.github.googelfist.moviesearcher.data.datasourse.RemoteDataSource
 import com.github.googelfist.moviesearcher.domain.Repository
@@ -14,48 +15,36 @@ class RepositoryImp @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
     private val localDataSource: LocalDataSource
 ) : Repository {
-
     private var pageNumber: Int = PAGE_COUNT_ONE
-    private var top250PageCount: Int = PAGE_COUNT_ZERO
+    private var totalPageCount: Int = PAGE_COUNT_ZERO
 
-    private var previewMovies = mutableListOf<MovieList>()
+    override suspend fun fetchMovieList() {
+        totalPageCount = loadPageCount()
 
-    override suspend fun loadMovieList(): List<MovieList> {
-
-        top250PageCount = loadPageCount()
-
-        when {
-            pageNumber == PAGE_COUNT_ONE -> {
-                var movies = localLoadMovieList(PAGE_COUNT_ONE)
-                movies?.let {
-                    previewMovies = it as MutableList<MovieList>
-                    increasePageNumber()
-                    return previewMovies.toList()
-                }
-                updateMovieList(PAGE_COUNT_ONE)
-
-                movies = localLoadMovieList(PAGE_COUNT_ONE)
-                    ?: throw RuntimeException("Movies is not present")
-                previewMovies = movies as MutableList<MovieList>
-                increasePageNumber()
-            }
-            pageNumber < top250PageCount -> {
-                var movies = localLoadMovieList(pageNumber)
-                movies?.let {
-                    previewMovies.addAll(it)
-                    increasePageNumber()
-                    return previewMovies.toList()
-                }
-                updateMovieList(pageNumber)
-
-                movies = localLoadMovieList(pageNumber)
-                    ?: throw RuntimeException("Movies is not present")
-                previewMovies.addAll(movies)
-                increasePageNumber()
-            }
+        if (pageNumber < totalPageCount) {
+            val remoteMovieList = remoteLoadMovieList(pageNumber)
+            localSaveMovieList(pageNumber, remoteMovieList)
+            increasePageNumber()
         }
-        return previewMovies.toList()
+
+//        when {
+//            pageNumber == PAGE_COUNT_ONE -> {
+//                val remoteMovieList = remoteLoadMovieList(pageNumber)
+//                localSaveMovieList(pageNumber, remoteMovieList)
+//                increasePageNumber()
+//            }
+//            pageNumber < totalPageCount -> {
+//                val remoteMovieList = remoteLoadMovieList(pageNumber)
+//                localSaveMovieList(pageNumber, remoteMovieList)
+//                increasePageNumber()
+//            }
+//        }
     }
+
+    override fun loadMovieList(): LiveData<List<MovieList>> {
+        return localDataSource.loadAllMovieLists()
+    }
+
 
     override suspend fun loadMovieItem(id: Int): MovieItem? {
         val movieItem = localLoadMovieItem(id)
@@ -90,15 +79,6 @@ class RepositoryImp @Inject constructor(
                 delay(300)
             }
         }
-    }
-
-    private suspend fun localLoadMovieList(page: Int): List<MovieList>? {
-        return localDataSource.loadMoviePageList(page)
-    }
-
-    private suspend fun updateMovieList(page: Int) {
-        val remoteMovieList = remoteLoadMovieList(page)
-        localSaveMovieList(page, remoteMovieList)
     }
 
     private suspend fun remoteLoadMovieList(page: Int): List<MovieList> {
@@ -140,8 +120,7 @@ class RepositoryImp @Inject constructor(
     }
 
     private suspend fun localLoadPageCount(): Int {
-        val pageCount = localDataSource.loadPageCount()
-        return pageCount ?: PAGE_COUNT_ZERO
+        return localDataSource.loadPageCount()
     }
 
     private suspend fun localSavePageCountDAO(pageCount: Int) {

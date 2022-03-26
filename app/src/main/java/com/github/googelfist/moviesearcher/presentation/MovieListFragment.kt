@@ -48,8 +48,9 @@ class MovieListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
-        observeViewModel(view)
         movieListInit()
+        observeViewModel(view)
+        setupSwipeRefreshLayout(view)
         setMoviePreviewOnClickListener()
         setupButtons()
     }
@@ -69,7 +70,7 @@ class MovieListFragment : Fragment() {
         rvMoviesPreview.adapter = moviesPreviewAdapter
 
         moviesPreviewAdapter.onScrolledToBottomListener = {
-            mainViewModel.onLoadMovieList()
+            mainViewModel.onFetchMovieList()
         }
     }
 
@@ -82,14 +83,17 @@ class MovieListFragment : Fragment() {
             }
         }
 
-        mainViewModel.errorMessage.observe(viewLifecycleOwner) {
-            it?.let { Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show() }
+        mainViewModel.snackBar.observe(viewLifecycleOwner) {
+            it?.let {
+                Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show()
+                mainViewModel.onSnackBarShown()
+            }
         }
     }
 
     private fun movieListInit() {
         if (mainViewModel.movieList.value == null) {
-            mainViewModel.onLoadMovieList()
+            mainViewModel.onFetchMovieList()
         }
     }
 
@@ -119,8 +123,17 @@ class MovieListFragment : Fragment() {
         }
     }
 
+    private fun setupSwipeRefreshLayout(view: View) {
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            mainViewModel.onFetchMovieList()
+            Snackbar.make(view, UPDATED_MESSAGE, Snackbar.LENGTH_SHORT).show()
+            binding.swipeRefreshLayout.isRefreshing = false
+        }
+    }
+
     companion object {
         private const val SCROLL_TO_POSITION_VALUE = 0
+        private const val UPDATED_MESSAGE = "Movie list updated"
 
         fun getNewInstance(): MovieListFragment {
             return MovieListFragment()

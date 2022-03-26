@@ -33,22 +33,24 @@ class MovieMapper @Inject constructor() {
         }
     }
 
-    suspend fun mapMoviePageListDAOtoMovieList(moviePageListDAO: MoviePageListDAO): List<MovieList> {
-        return withContext(Dispatchers.Default) {
-            val films = moviePageListDAO.moviesList
+    fun mapListMoviePageListDAOtoMovieList(listMoviePageListDAO: List<MoviePageListDAO>?): List<MovieList> {
+        listMoviePageListDAO?.let { it ->
             val result = mutableListOf<MovieList>()
-            films.forEach {
-                result.add(
-                    MovieList(
-                        kinopoiskId = it.kinopoiskId,
-                        nameRu = it.nameRu,
-                        nameEn = it.nameEn,
-                        posterUrl = it.posterUrl
+            it.flatMap { moviePageList ->
+                moviePageList.moviesList.map { movieListDAO ->
+                    result.add(
+                        MovieList(
+                            kinopoiskId = movieListDAO.kinopoiskId,
+                            nameRu = movieListDAO.nameRu,
+                            nameEn = movieListDAO.nameEn,
+                            posterUrl = movieListDAO.posterUrl
+                        )
                     )
-                )
+                }
             }
-            result
+            return result
         }
+        return emptyList()
     }
 
     suspend fun mapMovieListToMoviePageListDAO(

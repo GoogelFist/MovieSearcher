@@ -1,20 +1,23 @@
 package com.github.googelfist.moviesearcher.data.datasourse.local
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
 import com.github.googelfist.moviesearcher.data.datasourse.LocalDataSource
-import com.github.googelfist.moviesearcher.data.datasourse.local.model.MovieItemDAO
-import com.github.googelfist.moviesearcher.data.datasourse.local.model.MoviePageListDAO
 import com.github.googelfist.moviesearcher.data.datasourse.local.model.PageCountDAO
 import com.github.googelfist.moviesearcher.data.mapper.MovieMapper
 import com.github.googelfist.moviesearcher.domain.model.MovieItem
 import com.github.googelfist.moviesearcher.domain.model.MovieList
 import javax.inject.Inject
 
-class RoomDataSourceImpl @Inject constructor(private val movieDAO: MovieDAO, private val mapper: MovieMapper) : LocalDataSource {
-
-    override suspend fun loadMoviePageList(page: Int): List<MovieList>? {
-        val result = movieDAO.loadMoviePageList(page)
-        result?.let { return mapper.mapMoviePageListDAOtoMovieList(it) }
-        return null
+class RoomDataSourceImpl @Inject constructor(
+    private val movieDAO: MovieDAO,
+    private val mapper: MovieMapper
+) : LocalDataSource {
+    override fun loadAllMovieLists(): LiveData<List<MovieList>> {
+        val result = movieDAO.loadAllMovieLists()
+        return Transformations.map(result) {
+            mapper.mapListMoviePageListDAOtoMovieList(it)
+        }
     }
 
     override suspend fun insertMoviePageList(pageNumber: Int, movieList: List<MovieList>) {
@@ -33,12 +36,17 @@ class RoomDataSourceImpl @Inject constructor(private val movieDAO: MovieDAO, pri
         movieDAO.insertMovieItem(movieItemDAO)
     }
 
-    override suspend fun loadPageCount(): Int? {
+    override suspend fun loadPageCount(): Int {
         val pageCountDAO = movieDAO.loadPageCount()
-        return pageCountDAO?.pageCount
+        pageCountDAO?.let { return it.pageCount }
+        return PAGE_COUNT_ZERO
     }
 
     override suspend fun insertPageCount(pageCount: Int) {
         movieDAO.insertPageCount(PageCountDAO(pageCount))
+    }
+
+    companion object {
+        private const val PAGE_COUNT_ZERO = 0
     }
 }

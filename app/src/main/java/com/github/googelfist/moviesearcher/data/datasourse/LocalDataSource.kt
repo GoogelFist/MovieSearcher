@@ -1,13 +1,12 @@
 package com.github.googelfist.moviesearcher.data.datasourse
 
-import com.github.googelfist.moviesearcher.data.datasourse.local.model.MovieItemDAO
-import com.github.googelfist.moviesearcher.data.datasourse.local.model.MoviePageListDAO
-import com.github.googelfist.moviesearcher.data.datasourse.local.model.PageCountDAO
+import androidx.lifecycle.LiveData
+import com.github.googelfist.moviesearcher.data.datasourse.local.model.MovieListDAO
 import com.github.googelfist.moviesearcher.domain.model.MovieItem
 import com.github.googelfist.moviesearcher.domain.model.MovieList
 
 interface LocalDataSource {
-    suspend fun loadMoviePageList(page: Int): List<MovieList>?
+    fun loadAllMovieLists(): LiveData<List<MovieList>>
 
     suspend fun insertMoviePageList(pageNumber: Int, movieList: List<MovieList>)
 
@@ -15,7 +14,7 @@ interface LocalDataSource {
 
     suspend fun insertMovieItem(movieItem: MovieItem)
 
-    suspend fun loadPageCount(): Int?
+    suspend fun loadPageCount(): Int
 
     suspend fun insertPageCount(pageCount: Int)
 }

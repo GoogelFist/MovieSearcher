@@ -51,7 +51,7 @@ class MovieItemFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mainViewModel.onLoadMovieItem(movieId)
+//        mainViewModel.onLoadMovieItem(movieId)
         setOnSwipeListener()
         setupToolbar()
         observeViewModel()
@@ -59,7 +59,6 @@ class MovieItemFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mainViewModel.onClearMovieItemLiveData()
         _binding = null
     }
 
@@ -88,8 +87,10 @@ class MovieItemFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        mainViewModel.errorMessage.observe(viewLifecycleOwner) {
-            it?.let { Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show() }
+        mainViewModel.snackBar.observe(viewLifecycleOwner) {
+            it?.let { Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show()
+            mainViewModel.onSnackBarShown()
+            }
         }
 
         mainViewModel.movieItem.observe(viewLifecycleOwner) {
