@@ -26,10 +26,11 @@ class RoomDataSourceImpl @Inject constructor(
         movieDAO.insertMoviePageList(moviePageListDAO)
     }
 
-    override suspend fun loadMovieItem(id: Int): MovieItem? {
+    override fun loadMovieItem(id: Int): LiveData<MovieItem> {
         val result = movieDAO.loadMovieItem(id)
-        result?.let { return mapper.mapMovieItemDAOToMovieItem(it) }
-        return null
+        return Transformations.map(result) {
+            it?.let { mapper.mapMovieItemDAOToMovieItem(it) }
+        }
     }
 
     override suspend fun insertMovieItem(movieItem: MovieItem) {

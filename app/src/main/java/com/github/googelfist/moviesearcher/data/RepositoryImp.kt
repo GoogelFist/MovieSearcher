@@ -16,7 +16,7 @@ class RepositoryImp @Inject constructor(
     private val localDataSource: LocalDataSource
 ) : Repository {
 
-    override suspend fun fetchMovieList() {
+    override suspend fun updateMovieList() {
         val totalPageCount = loadPageCount()
         var pageNumber = loadPageNumber()
 
@@ -32,22 +32,20 @@ class RepositoryImp @Inject constructor(
         return localDataSource.loadAllMovieLists()
     }
 
-    override suspend fun loadMovieItem(id: Int): MovieItem? {
-        val movieItem = localLoadMovieItem(id)
-        movieItem?.let { return it }
+    override fun loadMovieItem(id: Int): LiveData<MovieItem> {
+        return localDataSource.loadMovieItem(id)
+    }
 
+    override suspend fun updateMovieItem(id: Int) {
         val remoteMovieItem = remoteLoadMovieItem(id)
-        remoteMovieItem?.let {
-            localSaveMovieItem(remoteMovieItem)
-            return remoteMovieItem
-        }
-        return null
+        localSaveMovieItem(remoteMovieItem)
     }
 
     override suspend fun loadPageCount(): Int {
         val pageCount = localDataSource.loadPageCount()
         if (pageCount == PAGE_COUNT_ZERO) {
-            return getUpdatedPageCount()
+            updatedPageCount()
+            return localDataSource.loadPageCount()
         }
         return pageCount
     }
@@ -59,19 +57,21 @@ class RepositoryImp @Inject constructor(
             for (item in remoteMovieList) {
                 val itemId = item.kinopoiskId
                 val remoteLoadMovieItem = remoteLoadMovieItem(itemId)
-                remoteLoadMovieItem?.let {
-                    localSaveMovieItem(remoteLoadMovieItem)
-                }
+                localSaveMovieItem(remoteLoadMovieItem)
                 delay(300)
             }
         }
+    }
+
+    private suspend fun loadPageNumber(): Int {
+        return localDataSource.loadPageNumber()
     }
 
     private suspend fun remoteLoadMovieList(page: Int): List<MovieList> {
         try {
             return remoteDataSource.loadMovieList(page)
         } catch (error: Throwable) {
-            throw RemoteLoadMovieListError("Unable to load top 250 best films", error)
+            throw RemoteLoadMovieListError("Unable to load movie list", error)
         }
     }
 
@@ -79,15 +79,15 @@ class RepositoryImp @Inject constructor(
         localDataSource.insertMoviePageList(pageNumber, movieList)
     }
 
-    private suspend fun localLoadMovieItem(id: Int): MovieItem? {
-        return localDataSource.loadMovieItem(id)
+    private suspend fun localSavePageNumberDAO(pageNumber: Int) {
+        localDataSource.insertPageNumber(pageNumber)
     }
 
-    private suspend fun remoteLoadMovieItem(id: Int): MovieItem? {
-        return try {
-            remoteDataSource.loadMovieItem(id)
+    private suspend fun remoteLoadMovieItem(id: Int): MovieItem {
+        try {
+            return remoteDataSource.loadMovieItem(id)
         } catch (error: Throwable) {
-            null
+            throw RemoteLoadMovieItemError("Unable to load movie item", error)
         }
     }
 
@@ -95,27 +95,13 @@ class RepositoryImp @Inject constructor(
         localDataSource.insertMovieItem(movieItem)
     }
 
-    private suspend fun getUpdatedPageCount(): Int {
+    private suspend fun updatedPageCount() {
         try {
             val pageCount = remoteDataSource.loadPageCount(PAGE_COUNT_ONE)
-            localSavePageCountDAO(pageCount)
-            return pageCount
+            localDataSource.insertPageCount(pageCount)
         } catch (error: Throwable) {
             throw RemoteLoadPageCountError("Unable to load page count", error)
         }
-    }
-
-
-    private suspend fun localSavePageCountDAO(pageCount: Int) {
-        localDataSource.insertPageCount(pageCount)
-    }
-
-    private suspend fun loadPageNumber(): Int {
-        return localDataSource.loadPageNumber()
-    }
-
-    private suspend fun localSavePageNumberDAO(pageNumber: Int) {
-        localDataSource.insertPageNumber(pageNumber)
     }
 
     companion object {
@@ -127,3 +113,4 @@ class RepositoryImp @Inject constructor(
 open class RemoteLoadError(message: String, cause: Throwable) : Throwable(message, cause)
 class RemoteLoadMovieListError(message: String, cause: Throwable) : RemoteLoadError(message, cause)
 class RemoteLoadPageCountError(message: String, cause: Throwable) : RemoteLoadError(message, cause)
+class RemoteLoadMovieItemError(message: String, cause: Throwable) : RemoteLoadError(message, cause)

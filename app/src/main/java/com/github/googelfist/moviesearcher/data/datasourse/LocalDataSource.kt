@@ -10,7 +10,7 @@ interface LocalDataSource {
 
     suspend fun insertMoviePageList(pageNumber: Int, movieList: List<MovieList>)
 
-    suspend fun loadMovieItem(id: Int): MovieItem?
+    fun loadMovieItem(id: Int): LiveData<MovieItem>
 
     suspend fun insertMovieItem(movieItem: MovieItem)
 

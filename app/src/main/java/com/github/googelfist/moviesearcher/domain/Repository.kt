@@ -5,11 +5,13 @@ import com.github.googelfist.moviesearcher.domain.model.MovieItem
 import com.github.googelfist.moviesearcher.domain.model.MovieList
 
 interface Repository {
-    suspend fun fetchMovieList()
+    suspend fun updateMovieList()
 
     fun loadMovieList(): LiveData<List<MovieList>>
 
-    suspend fun loadMovieItem(id: Int): MovieItem?
+    suspend fun updateMovieItem(id: Int)
+
+    fun loadMovieItem(id: Int): LiveData<MovieItem>
 
     suspend fun loadPageCount(): Int
 

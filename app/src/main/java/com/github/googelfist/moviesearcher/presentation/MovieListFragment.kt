@@ -31,7 +31,7 @@ class MovieListFragment : Fragment() {
     private val mainViewModel by activityViewModels<MainViewModel> { mainViewModelFabric }
 
     override fun onAttach(context: Context) {
-        requireActivity().component.inject(this)
+        context.component.inject(this)
         super.onAttach(context)
     }
 
@@ -70,7 +70,7 @@ class MovieListFragment : Fragment() {
         rvMoviesPreview.adapter = moviesPreviewAdapter
 
         moviesPreviewAdapter.onScrolledToBottomListener = {
-            mainViewModel.onFetchMovieList()
+            mainViewModel.onUpdateMovieList()
         }
     }
 
@@ -93,7 +93,7 @@ class MovieListFragment : Fragment() {
 
     private fun movieListInit() {
         if (mainViewModel.movieList.value == null) {
-            mainViewModel.onFetchMovieList()
+            mainViewModel.onUpdateMovieList()
         }
     }
 
@@ -125,7 +125,7 @@ class MovieListFragment : Fragment() {
 
     private fun setupSwipeRefreshLayout(view: View) {
         binding.swipeRefreshLayout.setOnRefreshListener {
-            mainViewModel.onFetchMovieList()
+            mainViewModel.onUpdateMovieList()
             Snackbar.make(view, UPDATED_MESSAGE, Snackbar.LENGTH_SHORT).show()
             binding.swipeRefreshLayout.isRefreshing = false
         }

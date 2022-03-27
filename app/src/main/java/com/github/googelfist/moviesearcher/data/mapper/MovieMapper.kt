@@ -89,22 +89,20 @@ class MovieMapper @Inject constructor() {
         }
     }
 
-    suspend fun mapMovieItemDAOToMovieItem(movieItem: MovieItemDAO): MovieItem {
-        return withContext(Dispatchers.Default) {
-            MovieItem(
-                kinopoiskId = movieItem.kinopoiskId,
-                nameRu = movieItem.nameRu,
-                nameEn = movieItem.nameEn,
-                nameOriginal = movieItem.nameOriginal,
-                posterUrl = movieItem.posterUrl,
-                ratingKinopoisk = movieItem.ratingKinopoisk,
-                year = movieItem.year,
-                description = movieItem.description,
-                country = movieItem.country,
-                genre = movieItem.genre,
-                webUrl = movieItem.webUrl
-            )
-        }
+    fun mapMovieItemDAOToMovieItem(movieItem: MovieItemDAO): MovieItem {
+        return MovieItem(
+            kinopoiskId = movieItem.kinopoiskId,
+            nameRu = movieItem.nameRu,
+            nameEn = movieItem.nameEn,
+            nameOriginal = movieItem.nameOriginal,
+            posterUrl = movieItem.posterUrl,
+            ratingKinopoisk = movieItem.ratingKinopoisk,
+            year = movieItem.year,
+            description = movieItem.description,
+            country = movieItem.country,
+            genre = movieItem.genre,
+            webUrl = movieItem.webUrl
+        )
     }
 
     suspend fun mapMovieItemToMovieItemDAO(movieItem: MovieItem): MovieItemDAO {

@@ -31,7 +31,7 @@ class MovieItemFragment : Fragment() {
     private var movieId = DEFAULT_MOVIE_ID
 
     override fun onAttach(context: Context) {
-        requireActivity().component.inject(this)
+        context.component.inject(this)
         super.onAttach(context)
     }
 
@@ -51,7 +51,7 @@ class MovieItemFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        mainViewModel.onLoadMovieItem(movieId)
+        mainViewModel.onLoadMovieItem(movieId)
         setOnSwipeListener()
         setupToolbar()
         observeViewModel()
@@ -88,8 +88,9 @@ class MovieItemFragment : Fragment() {
 
     private fun observeViewModel() {
         mainViewModel.snackBar.observe(viewLifecycleOwner) {
-            it?.let { Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show()
-            mainViewModel.onSnackBarShown()
+            it?.let {
+                Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show()
+                mainViewModel.onSnackBarShown()
             }
         }
 
@@ -103,7 +104,7 @@ class MovieItemFragment : Fragment() {
                 binding.tvItemDescription.text = it.description
                 binding.includeItemFragmentRating.tvItemRating.text = it.ratingKinopoisk
                 setupWebIntent(it.webUrl)
-            }
+            } ?: mainViewModel.onUpdateMovieItem(movieId)
         }
     }
 
