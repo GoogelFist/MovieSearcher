@@ -19,7 +19,7 @@ class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         appComponent = DaggerApplicationComponent.builder().context(this).build()
-        setupWorkerManagerJob(this)
+//        setupWorkerManagerJob(this)
     }
 }
 

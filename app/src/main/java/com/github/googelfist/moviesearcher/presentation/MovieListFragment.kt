@@ -31,7 +31,7 @@ class MovieListFragment : Fragment() {
     private val mainViewModel by activityViewModels<MainViewModel> { mainViewModelFabric }
 
     override fun onAttach(context: Context) {
-        requireActivity().component.inject(this)
+        context.component.inject(this)
         super.onAttach(context)
     }
 
@@ -48,8 +48,9 @@ class MovieListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
-        observeViewModel(view)
         movieListInit()
+        observeViewModel(view)
+        setupSwipeRefreshLayout(view)
         setMoviePreviewOnClickListener()
         setupButtons()
     }
@@ -69,10 +70,9 @@ class MovieListFragment : Fragment() {
         rvMoviesPreview.adapter = moviesPreviewAdapter
 
         moviesPreviewAdapter.onScrolledToBottomListener = {
-            mainViewModel.onLoadMovieList()
+            mainViewModel.onUpdateMovieList()
         }
     }
-
 
     private fun observeViewModel(view: View) {
         mainViewModel.movieList.observe(viewLifecycleOwner) { moviesPreviewAdapter.submitList(it) }
@@ -83,20 +83,22 @@ class MovieListFragment : Fragment() {
             }
         }
 
-        mainViewModel.errorMessage.observe(viewLifecycleOwner) {
-            it?.let { Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show() }
+        mainViewModel.snackBar.observe(viewLifecycleOwner) {
+            it?.let {
+                Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show()
+                mainViewModel.onSnackBarShown()
+            }
         }
     }
 
     private fun movieListInit() {
         if (mainViewModel.movieList.value == null) {
-            mainViewModel.onLoadMovieList()
+            mainViewModel.onUpdateMovieList()
         }
     }
 
     private fun setMoviePreviewOnClickListener() {
         moviesPreviewAdapter.onMovieItemClickListener = { _, kinopoiskId ->
-            mainViewModel.onLoadMovieItem(kinopoiskId)
 
             requireActivity().supportFragmentManager.commit {
                 setCustomAnimations(
@@ -107,7 +109,7 @@ class MovieListFragment : Fragment() {
                 )
                 replace(
                     R.id.fragment_container,
-                    MovieItemFragment.getNewInstance()
+                    MovieItemFragment.getNewInstance(kinopoiskId)
                 )
                 setReorderingAllowed(true)
                 addToBackStack(null)
@@ -121,8 +123,17 @@ class MovieListFragment : Fragment() {
         }
     }
 
+    private fun setupSwipeRefreshLayout(view: View) {
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            mainViewModel.onUpdateMovieList()
+            Snackbar.make(view, UPDATED_MESSAGE, Snackbar.LENGTH_SHORT).show()
+            binding.swipeRefreshLayout.isRefreshing = false
+        }
+    }
+
     companion object {
         private const val SCROLL_TO_POSITION_VALUE = 0
+        private const val UPDATED_MESSAGE = "Movie list updated"
 
         fun getNewInstance(): MovieListFragment {
             return MovieListFragment()

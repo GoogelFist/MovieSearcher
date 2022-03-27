@@ -6,62 +6,78 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.googelfist.moviesearcher.data.RemoteLoadMovieItemError
 import com.github.googelfist.moviesearcher.data.RemoteLoadMovieListError
+import com.github.googelfist.moviesearcher.data.RemoteLoadPageCountError
+import com.github.googelfist.moviesearcher.domain.UpdateMovieItemUseCase
+import com.github.googelfist.moviesearcher.domain.UpdateMovieListUseCase
 import com.github.googelfist.moviesearcher.domain.LoadMovieItemUseCase
 import com.github.googelfist.moviesearcher.domain.LoadMovieListUseCase
 import com.github.googelfist.moviesearcher.domain.model.MovieItem
-import com.github.googelfist.moviesearcher.domain.model.MovieList
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class MainViewModel(
     private val loadMovieListUseCase: LoadMovieListUseCase,
-    private val loadMovieItemUseCase: LoadMovieItemUseCase
+    private val loadMovieItemUseCase: LoadMovieItemUseCase,
+    private val updateMovieListUseCase: UpdateMovieListUseCase,
+    private val updateMovieItemUseCase: UpdateMovieItemUseCase
 ) : ViewModel() {
 
-    private var _errorMessage = MutableLiveData<String>()
-    val errorMessage: LiveData<String>
-        get() = _errorMessage
+    private var _snackBar = MutableLiveData<String?>()
+    val snackBar: LiveData<String?>
+        get() = _snackBar
 
-    private var _movieList = MutableLiveData<List<MovieList>>()
-    val movieList: LiveData<List<MovieList>>
-        get() = _movieList
+    val movieList = loadMovieListUseCase()
 
-    private var _movieDetail = MutableLiveData<MovieItem>()
-    val movieItem: LiveData<MovieItem>
-        get() = _movieDetail
+    lateinit var movieItem: LiveData<MovieItem>
 
-    private var _loading = MutableLiveData<Boolean>(false)
+    private var _loading = MutableLiveData(false)
     val loading: LiveData<Boolean>
         get() = _loading
 
+    fun onUpdateMovieList() {
+        launchUpdateMovieList {
+            updateMovieListUseCase()
+        }
+    }
 
-    fun onLoadMovieList() {
-        launchLoadMovieList {
-            loadMovieListUseCase()
+    fun onUpdateMovieItem(id: Int) {
+        launchUpdateMovieItem() {
+            updateMovieItemUseCase(id)
         }
     }
 
     fun onLoadMovieItem(id: Int) {
-        viewModelScope.launch {
+        movieItem = loadMovieItemUseCase(id)
+    }
+
+    fun onSnackBarShown() {
+        _snackBar.value = null
+    }
+
+    private fun launchUpdateMovieList(block: suspend () -> Unit): Job {
+        return viewModelScope.launch {
             try {
                 _loading.value = true
-                val movieDetail = loadMovieItemUseCase.invoke(id)
-                _movieDetail.value = movieDetail
-            } catch (error: RemoteLoadMovieItemError) {
-                _errorMessage.value = error.message
+                block()
+            } catch (error: Throwable) {
+                when (error) {
+                    is RemoteLoadMovieListError, is RemoteLoadPageCountError -> {
+                        _snackBar.value = error.message
+                    }
+                }
             } finally {
                 _loading.value = false
             }
         }
     }
 
-    private fun launchLoadMovieList(block: suspend () -> List<MovieList>): Job {
+    private fun launchUpdateMovieItem(block: suspend () -> Unit): Job {
         return viewModelScope.launch {
             try {
                 _loading.value = true
-                _movieList.value = block()
-            } catch (error: RemoteLoadMovieListError) {
-                _errorMessage.value = error.message
+                block()
+            } catch (error: RemoteLoadMovieItemError) {
+                _snackBar.value = error.message
             } finally {
                 _loading.value = false
             }

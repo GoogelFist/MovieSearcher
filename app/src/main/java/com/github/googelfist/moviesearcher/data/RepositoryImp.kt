@@ -1,9 +1,8 @@
 package com.github.googelfist.moviesearcher.data
 
+import androidx.lifecycle.LiveData
 import com.github.googelfist.moviesearcher.data.datasourse.LocalDataSource
 import com.github.googelfist.moviesearcher.data.datasourse.RemoteDataSource
-import com.github.googelfist.moviesearcher.data.datasourse.local.model.PageCountDAO
-import com.github.googelfist.moviesearcher.data.mapper.MovieMapper
 import com.github.googelfist.moviesearcher.domain.Repository
 import com.github.googelfist.moviesearcher.domain.model.MovieItem
 import com.github.googelfist.moviesearcher.domain.model.MovieList
@@ -14,66 +13,39 @@ import javax.inject.Inject
 
 class RepositoryImp @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
-    private val localDataSource: LocalDataSource,
-    private val mapper: MovieMapper
+    private val localDataSource: LocalDataSource
 ) : Repository {
 
-    private var pageNumber: Int = PAGE_COUNT_ONE
-    private var top250PageCount: Int = PAGE_COUNT_ZERO
+    override suspend fun updateMovieList() {
+        val totalPageCount = loadPageCount()
+        var pageNumber = loadPageNumber()
 
-    private var previewMovies = mutableListOf<MovieList>()
-
-    override suspend fun loadMovieList(): List<MovieList> {
-
-        top250PageCount = loadPageCount()
-
-        when {
-            pageNumber == PAGE_COUNT_ONE -> {
-                var movies = localLoadMovieList(PAGE_COUNT_ONE)
-                movies?.let {
-                    previewMovies = it as MutableList<MovieList>
-                    increasePageNumber()
-                    return previewMovies.toList()
-                }
-                updateMovieList(PAGE_COUNT_ONE)
-
-                movies = localLoadMovieList(PAGE_COUNT_ONE)
-                    ?: throw RuntimeException("Movies is not present")
-                previewMovies = movies as MutableList<MovieList>
-                increasePageNumber()
-            }
-            pageNumber < top250PageCount -> {
-                var movies = localLoadMovieList(pageNumber)
-                movies?.let {
-                    previewMovies.addAll(it)
-                    increasePageNumber()
-                    return previewMovies.toList()
-                }
-                updateMovieList(pageNumber)
-
-                movies = localLoadMovieList(pageNumber)
-                    ?: throw RuntimeException("Movies is not present")
-                previewMovies.addAll(movies)
-                increasePageNumber()
-            }
+        if (pageNumber <= totalPageCount) {
+            val remoteMovieList = remoteLoadMovieList(pageNumber)
+            localSaveMovieList(pageNumber, remoteMovieList)
+            pageNumber++
+            localSavePageNumberDAO(pageNumber)
         }
-        return previewMovies.toList()
     }
 
-    override suspend fun loadMovieItem(id: Int): MovieItem {
-        var movieItem = localLoadMovieItem(id)
-        movieItem?.let { return it }
+    override fun loadMovieList(): LiveData<List<MovieList>> {
+        return localDataSource.loadAllMovieLists()
+    }
 
-        updateMovieItem(id)
+    override fun loadMovieItem(id: Int): LiveData<MovieItem> {
+        return localDataSource.loadMovieItem(id)
+    }
 
-        movieItem = localLoadMovieItem(id)
-        return movieItem ?: throw RuntimeException("Movie item is not present")
+    override suspend fun updateMovieItem(id: Int) {
+        val remoteMovieItem = remoteLoadMovieItem(id)
+        localSaveMovieItem(remoteMovieItem)
     }
 
     override suspend fun loadPageCount(): Int {
-        val pageCount = localLoadPageCount()
+        val pageCount = localDataSource.loadPageCount()
         if (pageCount == PAGE_COUNT_ZERO) {
-            return getUpdatedPageCount()
+            updatedPageCount()
+            return localDataSource.loadPageCount()
         }
         return pageCount
     }
@@ -91,80 +63,45 @@ class RepositoryImp @Inject constructor(
         }
     }
 
-    private suspend fun localLoadMovieList(page: Int): List<MovieList>? {
-        val result = localDataSource.loadMoviePageList(page)
-        result?.let { return mapper.mapMoviePageListDAOtoMovieList(it) }
-        return null
-    }
-
-    private suspend fun updateMovieList(page: Int) {
-        val remoteMovieList = remoteLoadMovieList(page)
-        localSaveMovieList(page, remoteMovieList)
+    private suspend fun loadPageNumber(): Int {
+        return localDataSource.loadPageNumber()
     }
 
     private suspend fun remoteLoadMovieList(page: Int): List<MovieList> {
         try {
-            val result = remoteDataSource.loadMovieList(page)
-
-            return mapper.mapMovieListDTOtoMovieList(result)
+            return remoteDataSource.loadMovieList(page)
         } catch (error: Throwable) {
-            throw RemoteLoadMovieListError("Unable to load top 250 best films", error)
+            throw RemoteLoadMovieListError("Unable to load movie list", error)
         }
     }
 
     private suspend fun localSaveMovieList(pageNumber: Int, movieList: List<MovieList>) {
-        val moviePageListDAO = mapper.mapMovieListToMoviePageListDAO(pageNumber, movieList)
-        localDataSource.insertMoviePageList(moviePageListDAO)
+        localDataSource.insertMoviePageList(pageNumber, movieList)
     }
 
-    private suspend fun localLoadMovieItem(id: Int): MovieItem? {
-        val localResult = localDataSource.loadMovieItem(id)
-        localResult?.let { return mapper.mapMovieItemDAOToMovieItem(it) }
-        return null
-    }
-
-    private suspend fun updateMovieItem(id: Int) {
-        val remoteMovieItem = remoteLoadMovieItem(id)
-        localSaveMovieItem(remoteMovieItem)
+    private suspend fun localSavePageNumberDAO(pageNumber: Int) {
+        localDataSource.insertPageNumber(pageNumber)
     }
 
     private suspend fun remoteLoadMovieItem(id: Int): MovieItem {
         try {
-            val result = remoteDataSource.loadMovieItem(id)
-
-            return mapper.mapMovieItemDTOtoMovieItem(result)
+            return remoteDataSource.loadMovieItem(id)
         } catch (error: Throwable) {
-            throw RemoteLoadMovieItemError("Unable to load movie detail", error)
+            throw RemoteLoadMovieItemError("Unable to load movie item", error)
         }
     }
 
     private suspend fun localSaveMovieItem(movieItem: MovieItem) {
-        val movieItemDAO = mapper.mapMovieItemToMovieItemDAO(movieItem)
-        localDataSource.insertMovieItem(movieItemDAO)
+        localDataSource.insertMovieItem(movieItem)
     }
 
-    private suspend fun getUpdatedPageCount(): Int {
+    private suspend fun updatedPageCount() {
         try {
-            val pageCount = remoteDataSource.loadMovieList(PAGE_COUNT_ONE).pagesCount
-            localSavePageCountDAO(pageCount)
-            return pageCount
+            val pageCount = remoteDataSource.loadPageCount(PAGE_COUNT_ONE)
+            localDataSource.insertPageCount(pageCount)
         } catch (error: Throwable) {
             throw RemoteLoadPageCountError("Unable to load page count", error)
         }
-    }
-
-    private suspend fun localLoadPageCount(): Int {
-        val pageCountDAO = localDataSource.loadPageCount()
-        pageCountDAO?.let { return it.pageCount }
-        return PAGE_COUNT_ZERO
-    }
-
-    private suspend fun localSavePageCountDAO(pageCount: Int) {
-        localDataSource.insertPageCount(PageCountDAO(pageCount))
-    }
-
-    private fun increasePageNumber() {
-        pageNumber++
     }
 
     companion object {
@@ -175,5 +112,5 @@ class RepositoryImp @Inject constructor(
 
 open class RemoteLoadError(message: String, cause: Throwable) : Throwable(message, cause)
 class RemoteLoadMovieListError(message: String, cause: Throwable) : RemoteLoadError(message, cause)
-class RemoteLoadMovieItemError(message: String, cause: Throwable) : RemoteLoadError(message, cause)
 class RemoteLoadPageCountError(message: String, cause: Throwable) : RemoteLoadError(message, cause)
+class RemoteLoadMovieItemError(message: String, cause: Throwable) : RemoteLoadError(message, cause)
