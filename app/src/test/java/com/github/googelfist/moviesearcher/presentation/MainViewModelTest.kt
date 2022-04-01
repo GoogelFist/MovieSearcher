@@ -11,6 +11,10 @@ import com.github.googelfist.moviesearcher.domain.UpdateMovieItemUseCase
 import com.github.googelfist.moviesearcher.domain.UpdateMovieListUseCase
 import com.github.googelfist.moviesearcher.domain.model.MovieItem
 import com.github.googelfist.moviesearcher.domain.model.MovieList
+import com.github.googelfist.moviesearcher.utils.CoroutinesTestExtension
+import com.github.googelfist.moviesearcher.utils.InstantTaskExecutorExtension
+import com.github.googelfist.moviesearcher.utils.captureValues
+import com.github.googelfist.moviesearcher.utils.getValueForTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach

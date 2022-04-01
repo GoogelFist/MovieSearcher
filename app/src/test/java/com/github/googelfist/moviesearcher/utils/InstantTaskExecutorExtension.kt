@@ -1,4 +1,4 @@
-package com.github.googelfist.moviesearcher.presentation
+package com.github.googelfist.moviesearcher.utils
 
 import androidx.arch.core.executor.ArchTaskExecutor
 import androidx.arch.core.executor.TaskExecutor

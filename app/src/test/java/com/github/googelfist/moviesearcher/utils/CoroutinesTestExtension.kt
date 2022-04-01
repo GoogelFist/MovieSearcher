@@ -1,4 +1,4 @@
-package com.github.googelfist.moviesearcher.presentation
+package com.github.googelfist.moviesearcher.utils
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
