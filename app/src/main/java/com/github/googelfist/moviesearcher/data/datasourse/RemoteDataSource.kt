@@ -1,7 +1,5 @@
 package com.github.googelfist.moviesearcher.data.datasourse
 
-import com.github.googelfist.moviesearcher.data.datasourse.network.model.item.MovieItemDTO
-import com.github.googelfist.moviesearcher.data.datasourse.network.model.list.MovieListDTO
 import com.github.googelfist.moviesearcher.domain.model.MovieItem
 import com.github.googelfist.moviesearcher.domain.model.MovieList
 

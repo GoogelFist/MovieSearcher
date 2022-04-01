@@ -9,14 +9,15 @@ import com.github.googelfist.moviesearcher.data.datasourse.network.model.item.Mo
 import com.github.googelfist.moviesearcher.data.datasourse.network.model.list.MovieListDTO
 import com.github.googelfist.moviesearcher.domain.model.MovieItem
 import com.github.googelfist.moviesearcher.domain.model.MovieList
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class MovieMapper @Inject constructor() {
+class MovieMapper @Inject constructor(private val dispatcher: CoroutineDispatcher) {
 
     suspend fun mapMovieListDTOtoMovieList(dto: MovieListDTO): List<MovieList> {
-        return withContext(Dispatchers.Default) {
+        return withContext(dispatcher) {
             val films = dto.films
             val result = mutableListOf<MovieList>()
             films.forEach {
@@ -57,7 +58,7 @@ class MovieMapper @Inject constructor() {
         page: Int,
         movieList: List<MovieList>
     ): MoviePageListDAO {
-        return withContext(Dispatchers.Default) {
+        return withContext(dispatcher) {
             val moviePreviewListDAO = movieList.map {
                 MovieListDAO(
                     kinopoiskId = it.kinopoiskId,
@@ -72,7 +73,7 @@ class MovieMapper @Inject constructor() {
     }
 
     suspend fun mapMovieItemDTOtoMovieItem(dto: MovieItemDTO): MovieItem {
-        return withContext(Dispatchers.Default) {
+        return withContext(dispatcher) {
             MovieItem(
                 kinopoiskId = dto.kinopoiskId,
                 nameRu = dto.nameRu,
@@ -106,7 +107,7 @@ class MovieMapper @Inject constructor() {
     }
 
     suspend fun mapMovieItemToMovieItemDAO(movieItem: MovieItem): MovieItemDAO {
-        return withContext(Dispatchers.Default) {
+        return withContext(dispatcher) {
             MovieItemDAO(
                 kinopoiskId = movieItem.kinopoiskId,
                 nameRu = movieItem.nameRu,

@@ -58,7 +58,7 @@ class RepositoryImp @Inject constructor(
                 val itemId = item.kinopoiskId
                 val remoteLoadMovieItem = remoteLoadMovieItem(itemId)
                 localSaveMovieItem(remoteLoadMovieItem)
-                delay(300)
+                delay(REFRESH_DELAY)
             }
         }
     }
@@ -71,7 +71,7 @@ class RepositoryImp @Inject constructor(
         try {
             return remoteDataSource.loadMovieList(page)
         } catch (error: Throwable) {
-            throw RemoteLoadMovieListError("Unable to load movie list", error)
+            throw RemoteLoadMovieListError(UNABLE_LOAD_MOVIE_LIST_ERROR_MESSAGE, error)
         }
     }
 
@@ -87,7 +87,7 @@ class RepositoryImp @Inject constructor(
         try {
             return remoteDataSource.loadMovieItem(id)
         } catch (error: Throwable) {
-            throw RemoteLoadMovieItemError("Unable to load movie item", error)
+            throw RemoteLoadMovieItemError(UNABLE_LOAD_MOVIE_ITEM_ERROR_MESSAGE, error)
         }
     }
 
@@ -100,13 +100,19 @@ class RepositoryImp @Inject constructor(
             val pageCount = remoteDataSource.loadPageCount(PAGE_COUNT_ONE)
             localDataSource.insertPageCount(pageCount)
         } catch (error: Throwable) {
-            throw RemoteLoadPageCountError("Unable to load page count", error)
+            throw RemoteLoadPageCountError(UNABLE_LOAD_PAGE_COUNT_ERROR_MESSAGE, error)
         }
     }
 
     companion object {
         private const val PAGE_COUNT_ZERO = 0
         private const val PAGE_COUNT_ONE = 1
+
+        private const val REFRESH_DELAY = 300L
+
+        private const val UNABLE_LOAD_MOVIE_LIST_ERROR_MESSAGE = "Unable to load movie list"
+        private const val UNABLE_LOAD_MOVIE_ITEM_ERROR_MESSAGE = "Unable to load movie item"
+        private const val UNABLE_LOAD_PAGE_COUNT_ERROR_MESSAGE = "Unable to load page count"
     }
 }
 
