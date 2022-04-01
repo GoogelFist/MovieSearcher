@@ -39,7 +39,7 @@ class RefreshMainDataWork(
             val pageCount = repository.loadPageCount()
             for (page in 1..pageCount) {
                 repository.refreshLocalData(page)
-                delay(500)
+                delay(LOAD_DELAY)
             }
             Result.success()
         } catch (error: RemoteLoadError) {
@@ -91,6 +91,8 @@ class RefreshMainDataWork(
     companion object {
         private const val NOTIFICATION_ID = 101
         private const val NOTIFICATION_TITLE = "Update movies data"
+
+        private const val LOAD_DELAY = 500L
 
         private const val CANCEL_ACTION_TITLE = "Cancel"
 
