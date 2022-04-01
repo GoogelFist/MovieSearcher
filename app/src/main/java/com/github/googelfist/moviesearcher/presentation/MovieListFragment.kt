@@ -75,7 +75,14 @@ class MovieListFragment : Fragment() {
     }
 
     private fun observeViewModel(view: View) {
-        mainViewModel.movieList.observe(viewLifecycleOwner) { moviesPreviewAdapter.submitList(it) }
+        mainViewModel.movieList.observe(viewLifecycleOwner) {
+
+            if (it.isEmpty()) {
+                mainViewModel.onUpdateMovieList()
+            } else {
+                moviesPreviewAdapter.submitList(it)
+            }
+        }
 
         mainViewModel.loading.observe(viewLifecycleOwner) { value ->
             value.let { show ->
@@ -92,9 +99,7 @@ class MovieListFragment : Fragment() {
     }
 
     private fun movieListInit() {
-        if (mainViewModel.movieList.value == null) {
-            mainViewModel.onUpdateMovieList()
-        }
+        mainViewModel.onLoadMovieList()
     }
 
     private fun setMoviePreviewOnClickListener() {

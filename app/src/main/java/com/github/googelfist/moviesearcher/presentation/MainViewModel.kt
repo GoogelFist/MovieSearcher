@@ -7,11 +7,12 @@ import androidx.lifecycle.viewModelScope
 import com.github.googelfist.moviesearcher.data.RemoteLoadMovieItemError
 import com.github.googelfist.moviesearcher.data.RemoteLoadMovieListError
 import com.github.googelfist.moviesearcher.data.RemoteLoadPageCountError
-import com.github.googelfist.moviesearcher.domain.UpdateMovieItemUseCase
-import com.github.googelfist.moviesearcher.domain.UpdateMovieListUseCase
 import com.github.googelfist.moviesearcher.domain.LoadMovieItemUseCase
 import com.github.googelfist.moviesearcher.domain.LoadMovieListUseCase
+import com.github.googelfist.moviesearcher.domain.UpdateMovieItemUseCase
+import com.github.googelfist.moviesearcher.domain.UpdateMovieListUseCase
 import com.github.googelfist.moviesearcher.domain.model.MovieItem
+import com.github.googelfist.moviesearcher.domain.model.MovieList
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -26,7 +27,7 @@ class MainViewModel(
     val snackBar: LiveData<String?>
         get() = _snackBar
 
-    val movieList = loadMovieListUseCase()
+    lateinit var movieList: LiveData<List<MovieList>>
 
     lateinit var movieItem: LiveData<MovieItem>
 
@@ -44,6 +45,10 @@ class MainViewModel(
         launchUpdateMovieItem() {
             updateMovieItemUseCase(id)
         }
+    }
+
+    fun onLoadMovieList() {
+        movieList = loadMovieListUseCase()
     }
 
     fun onLoadMovieItem(id: Int) {
