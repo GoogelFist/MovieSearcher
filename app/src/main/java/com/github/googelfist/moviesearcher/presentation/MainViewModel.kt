@@ -72,14 +72,12 @@ class MainViewModel(
 
     private fun launchLoadMovieList(block: suspend () -> List<MovieList>): Job {
         return viewModelScope.launch {
-            _listState.value = MovieListState.LoadingState
             val movieList = block()
 
             if (movieList.isEmpty()) {
                 _listState.value = MovieListState.NoListState
             } else {
                 _movieList.value = movieList
-                _listState.value = MovieListState.LoadedListState
             }
         }
     }
@@ -105,14 +103,12 @@ class MainViewModel(
 
     private fun launchLoadMovieItem(block: suspend () -> MovieItem?): Job {
         return viewModelScope.launch {
-            _itemState.value = MovieItemState.LoadingState
             val movieItem = block()
 
             if (movieItem == null) {
                 _itemState.value = MovieItemState.NoItemState
             } else {
                 _movieItem.value = movieItem
-                _itemState.value = MovieItemState.LoadedItemState
             }
         }
     }

@@ -78,20 +78,6 @@ class MovieListFragment : Fragment() {
         mainViewModel.movieListState.observe(viewLifecycleOwner) { state ->
             with(binding) {
                 when (state) {
-                    is MovieListState.LoadingState -> {
-                        pbFragmentList.visibility = View.VISIBLE
-                        fabUpList.visibility = View.GONE
-                        txtEmptyList.visibility = View.GONE
-                        rvMoviesList.visibility = View.GONE
-                        tbFragmentList.visibility = View.GONE
-                    }
-                    is MovieListState.LoadedListState -> {
-                        pbFragmentList.visibility = View.GONE
-                        fabUpList.visibility = View.VISIBLE
-                        txtEmptyList.visibility = View.GONE
-                        rvMoviesList.visibility = View.VISIBLE
-                        tbFragmentList.visibility = View.VISIBLE
-                    }
                     is MovieListState.NoListState -> {
                         pbFragmentList.visibility = View.GONE
                         fabUpList.visibility = View.GONE
@@ -101,9 +87,17 @@ class MovieListFragment : Fragment() {
                     }
                     is MovieListState.UpdatingState -> {
                         pbFragmentList.visibility = View.VISIBLE
+                        fabUpList.visibility = View.GONE
+                        txtEmptyList.visibility = View.GONE
+                        rvMoviesList.visibility = View.GONE
+                        tbFragmentList.visibility = View.GONE
                     }
                     is MovieListState.UpdatedState -> {
                         pbFragmentList.visibility = View.GONE
+                        fabUpList.visibility = View.VISIBLE
+                        txtEmptyList.visibility = View.GONE
+                        rvMoviesList.visibility = View.VISIBLE
+                        tbFragmentList.visibility = View.VISIBLE
                     }
                     is MovieListState.ErrorState -> {
                         pbFragmentList.visibility = View.GONE
@@ -113,7 +107,6 @@ class MovieListFragment : Fragment() {
                         throw RuntimeException("Unknown state")
                     }
                 }
-
             }
         }
 

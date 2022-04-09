@@ -93,18 +93,6 @@ class MovieItemFragment : Fragment() {
         mainViewModel.movieItemState.observe(viewLifecycleOwner) { state ->
             with(binding) {
                 when (state) {
-                    is MovieItemState.LoadingState -> {
-                        pbFragmentItem.visibility = View.VISIBLE
-                        svMovieItem.visibility = View.GONE
-                        tbFragmentItemMovie.visibility = View.GONE
-                        txtNoItem.visibility = View.GONE
-                    }
-                    is MovieItemState.LoadedItemState -> {
-                        pbFragmentItem.visibility = View.GONE
-                        svMovieItem.visibility = View.VISIBLE
-                        tbFragmentItemMovie.visibility = View.VISIBLE
-                        txtNoItem.visibility = View.GONE
-                    }
                     is MovieItemState.NoItemState -> {
                         pbFragmentItem.visibility = View.GONE
                         svMovieItem.visibility = View.GONE
@@ -113,9 +101,15 @@ class MovieItemFragment : Fragment() {
                     }
                     is MovieItemState.UpdatingState -> {
                         pbFragmentItem.visibility = View.VISIBLE
+                        svMovieItem.visibility = View.GONE
+                        tbFragmentItemMovie.visibility = View.GONE
+                        txtNoItem.visibility = View.GONE
                     }
                     is MovieItemState.UpdatedState -> {
                         pbFragmentItem.visibility = View.GONE
+                        svMovieItem.visibility = View.VISIBLE
+                        tbFragmentItemMovie.visibility = View.VISIBLE
+                        txtNoItem.visibility = View.GONE
                     }
                     is MovieItemState.ErrorState -> {
                         Snackbar.make(view, state.message, Snackbar.LENGTH_SHORT).show()
@@ -129,14 +123,14 @@ class MovieItemFragment : Fragment() {
 
         mainViewModel.movieItem.observe(viewLifecycleOwner) {
             it?.let {
-                with(binding) {
+                with(binding.includeItemMovieInfo) {
                     Picasso.get().load(it.posterUrl).into(ivItemMovieImage)
                     tvItemCountry.text = it.country
                     tvItemMovieName.text = it.nameOriginal
                     tvItemGenre.text = it.genre
                     tvItemYear.text = it.year
                     tvItemDescription.text = it.description
-                    includeItemFragmentRating.tvItemRating.text = it.ratingKinopoisk
+                    tvItemRating.text = it.ratingKinopoisk
                     setupWebIntent(it.webUrl)
                 }
             }
