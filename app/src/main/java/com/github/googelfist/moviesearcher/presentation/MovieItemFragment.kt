@@ -13,6 +13,7 @@ import androidx.fragment.app.activityViewModels
 import com.github.googelfist.moviesearcher.R
 import com.github.googelfist.moviesearcher.component
 import com.github.googelfist.moviesearcher.databinding.FragmentItemMovieBinding
+import com.github.googelfist.moviesearcher.presentation.states.MovieItemState
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 import javax.inject.Inject
@@ -51,10 +52,10 @@ class MovieItemFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mainViewModel.onLoadMovieItem(movieId)
         setOnSwipeListener()
         setupToolbar()
-        observeViewModel()
+        observeViewModel(view)
+        mainViewModel.onRefreshItem(movieId)
     }
 
     override fun onDestroy() {
@@ -80,31 +81,65 @@ class MovieItemFragment : Fragment() {
     }
 
     private fun setupToolbar() {
-        binding.tbFragmentItemMovie.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
-        binding.tbFragmentItemMovie.setNavigationOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack()
+        with(binding) {
+            tbFragmentItemMovie.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+            tbFragmentItemMovie.setNavigationOnClickListener {
+                requireActivity().supportFragmentManager.popBackStack()
+            }
         }
     }
 
-    private fun observeViewModel() {
-        mainViewModel.snackBar.observe(viewLifecycleOwner) {
-            it?.let {
-                Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show()
-                mainViewModel.onSnackBarShown()
+    private fun observeViewModel(view: View) {
+        mainViewModel.movieItemState.observe(viewLifecycleOwner) { state ->
+            with(binding) {
+                when (state) {
+                    is MovieItemState.LoadingState -> {
+                        pbFragmentItem.visibility = View.VISIBLE
+                        svMovieItem.visibility = View.GONE
+                        tbFragmentItemMovie.visibility = View.GONE
+                        txtNoItem.visibility = View.GONE
+                    }
+                    is MovieItemState.LoadedItemState -> {
+                        pbFragmentItem.visibility = View.GONE
+                        svMovieItem.visibility = View.VISIBLE
+                        tbFragmentItemMovie.visibility = View.VISIBLE
+                        txtNoItem.visibility = View.GONE
+                    }
+                    is MovieItemState.NoItemState -> {
+                        pbFragmentItem.visibility = View.GONE
+                        svMovieItem.visibility = View.GONE
+                        tbFragmentItemMovie.visibility = View.GONE
+                        txtNoItem.visibility = View.VISIBLE
+                    }
+                    is MovieItemState.UpdatingState -> {
+                        pbFragmentItem.visibility = View.VISIBLE
+                    }
+                    is MovieItemState.UpdatedState -> {
+                        pbFragmentItem.visibility = View.GONE
+                    }
+                    is MovieItemState.ErrorState -> {
+                        Snackbar.make(view, state.message, Snackbar.LENGTH_SHORT).show()
+                    }
+                    else -> {
+                        throw RuntimeException("Unknown state")
+                    }
+                }
             }
         }
 
         mainViewModel.movieItem.observe(viewLifecycleOwner) {
             it?.let {
-                Picasso.get().load(it.posterUrl).into(binding.ivItemMovieImage)
-                binding.tvItemCountry.text = it.country
-                binding.tvItemMovieName.text = it.nameOriginal
-                binding.tvItemGenre.text = it.genre
-                binding.tvItemYear.text = it.year
-                binding.tvItemDescription.text = it.description
-                binding.includeItemFragmentRating.tvItemRating.text = it.ratingKinopoisk
-                setupWebIntent(it.webUrl)
-            } ?: mainViewModel.onUpdateMovieItem(movieId)
+                with(binding) {
+                    Picasso.get().load(it.posterUrl).into(ivItemMovieImage)
+                    tvItemCountry.text = it.country
+                    tvItemMovieName.text = it.nameOriginal
+                    tvItemGenre.text = it.genre
+                    tvItemYear.text = it.year
+                    tvItemDescription.text = it.description
+                    includeItemFragmentRating.tvItemRating.text = it.ratingKinopoisk
+                    setupWebIntent(it.webUrl)
+                }
+            }
         }
     }
 

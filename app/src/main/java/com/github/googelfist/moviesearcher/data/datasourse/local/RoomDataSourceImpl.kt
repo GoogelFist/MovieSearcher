@@ -1,7 +1,5 @@
 package com.github.googelfist.moviesearcher.data.datasourse.local
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
 import com.github.googelfist.moviesearcher.data.datasourse.LocalDataSource
 import com.github.googelfist.moviesearcher.data.datasourse.local.model.PageCountDAO
 import com.github.googelfist.moviesearcher.data.datasourse.local.model.PageNumberDAO
@@ -14,11 +12,9 @@ class RoomDataSourceImpl @Inject constructor(
     private val movieDAO: MovieDAO,
     private val mapper: MovieMapper
 ) : LocalDataSource {
-    override fun loadAllMovieLists(): LiveData<List<MovieList>> {
+    override suspend fun loadAllMovieLists(): List<MovieList> {
         val result = movieDAO.loadAllMovieLists()
-        return Transformations.map(result) {
-            mapper.mapListMoviePageListDAOtoMovieList(it)
-        }
+        return mapper.mapListMoviePageListDAOtoMovieList(result)
     }
 
     override suspend fun insertMoviePageList(pageNumber: Int, movieList: List<MovieList>) {
@@ -26,11 +22,10 @@ class RoomDataSourceImpl @Inject constructor(
         movieDAO.insertMoviePageList(moviePageListDAO)
     }
 
-    override fun loadMovieItem(id: Int): LiveData<MovieItem> {
+    override suspend fun loadMovieItem(id: Int): MovieItem? {
         val result = movieDAO.loadMovieItem(id)
-        return Transformations.map(result) {
-            it?.let { mapper.mapMovieItemDAOToMovieItem(it) }
-        }
+        result?.let { return mapper.mapMovieItemDAOToMovieItem(it) }
+        return null
     }
 
     override suspend fun insertMovieItem(movieItem: MovieItem) {

@@ -10,7 +10,6 @@ import com.github.googelfist.moviesearcher.data.datasourse.network.model.list.Mo
 import com.github.googelfist.moviesearcher.domain.model.MovieItem
 import com.github.googelfist.moviesearcher.domain.model.MovieList
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -34,24 +33,26 @@ class MovieMapper @Inject constructor(private val dispatcher: CoroutineDispatche
         }
     }
 
-    fun mapListMoviePageListDAOtoMovieList(listMoviePageListDAO: List<MoviePageListDAO>?): List<MovieList> {
-        listMoviePageListDAO?.let { it ->
-            val result = mutableListOf<MovieList>()
-            it.flatMap { moviePageList ->
-                moviePageList.moviesList.map { movieListDAO ->
-                    result.add(
-                        MovieList(
-                            kinopoiskId = movieListDAO.kinopoiskId,
-                            nameRu = movieListDAO.nameRu,
-                            nameEn = movieListDAO.nameEn,
-                            posterUrl = movieListDAO.posterUrl
+    suspend fun mapListMoviePageListDAOtoMovieList(listMoviePageListDAO: List<MoviePageListDAO>?): List<MovieList> {
+        return withContext(dispatcher) {
+            listMoviePageListDAO?.let { it ->
+                val result = mutableListOf<MovieList>()
+                it.flatMap { moviePageList ->
+                    moviePageList.moviesList.map { movieListDAO ->
+                        result.add(
+                            MovieList(
+                                kinopoiskId = movieListDAO.kinopoiskId,
+                                nameRu = movieListDAO.nameRu,
+                                nameEn = movieListDAO.nameEn,
+                                posterUrl = movieListDAO.posterUrl
+                            )
                         )
-                    )
+                    }
                 }
+                return@withContext result
             }
-            return result
+            return@withContext emptyList()
         }
-        return emptyList()
     }
 
     suspend fun mapMovieListToMoviePageListDAO(
@@ -90,20 +91,22 @@ class MovieMapper @Inject constructor(private val dispatcher: CoroutineDispatche
         }
     }
 
-    fun mapMovieItemDAOToMovieItem(movieItem: MovieItemDAO): MovieItem {
-        return MovieItem(
-            kinopoiskId = movieItem.kinopoiskId,
-            nameRu = movieItem.nameRu,
-            nameEn = movieItem.nameEn,
-            nameOriginal = movieItem.nameOriginal,
-            posterUrl = movieItem.posterUrl,
-            ratingKinopoisk = movieItem.ratingKinopoisk,
-            year = movieItem.year,
-            description = movieItem.description,
-            country = movieItem.country,
-            genre = movieItem.genre,
-            webUrl = movieItem.webUrl
-        )
+    suspend fun mapMovieItemDAOToMovieItem(movieItem: MovieItemDAO): MovieItem {
+        return withContext(dispatcher) {
+            MovieItem(
+                kinopoiskId = movieItem.kinopoiskId,
+                nameRu = movieItem.nameRu,
+                nameEn = movieItem.nameEn,
+                nameOriginal = movieItem.nameOriginal,
+                posterUrl = movieItem.posterUrl,
+                ratingKinopoisk = movieItem.ratingKinopoisk,
+                year = movieItem.year,
+                description = movieItem.description,
+                country = movieItem.country,
+                genre = movieItem.genre,
+                webUrl = movieItem.webUrl
+            )
+        }
     }
 
     suspend fun mapMovieItemToMovieItemDAO(movieItem: MovieItem): MovieItemDAO {
