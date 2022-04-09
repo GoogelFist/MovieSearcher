@@ -84,6 +84,7 @@ class MovieListFragment : Fragment() {
                         txtEmptyList.visibility = View.VISIBLE
                         recyclerViewMoviesList.visibility = View.GONE
                         toolBarFragmentList.visibility = View.GONE
+                        refreshButtonMovieList.visibility = View.VISIBLE
                     }
                     is MovieListState.UpdatingState -> {
                         progressBarFragmentList.visibility = View.VISIBLE
@@ -91,6 +92,7 @@ class MovieListFragment : Fragment() {
                         txtEmptyList.visibility = View.GONE
                         recyclerViewMoviesList.visibility = View.GONE
                         toolBarFragmentList.visibility = View.GONE
+                        refreshButtonMovieList.visibility = View.GONE
                     }
                     is MovieListState.UpdatedState -> {
                         progressBarFragmentList.visibility = View.GONE
@@ -98,6 +100,7 @@ class MovieListFragment : Fragment() {
                         txtEmptyList.visibility = View.GONE
                         recyclerViewMoviesList.visibility = View.VISIBLE
                         toolBarFragmentList.visibility = View.VISIBLE
+                        refreshButtonMovieList.visibility = View.GONE
                     }
                     is MovieListState.ErrorState -> {
                         progressBarFragmentList.visibility = View.GONE
@@ -134,8 +137,13 @@ class MovieListFragment : Fragment() {
     }
 
     private fun setupButtons() {
-        binding.floatingActionButtonUpList.setOnClickListener {
-            linearLayoutManager.scrollToPosition(SCROLL_TO_POSITION_VALUE)
+        with(binding) {
+            floatingActionButtonUpList.setOnClickListener {
+                linearLayoutManager.scrollToPosition(SCROLL_TO_POSITION_VALUE)
+            }
+            refreshButtonMovieList.setOnClickListener {
+                mainViewModel.onRefreshList()
+            }
         }
     }
 
