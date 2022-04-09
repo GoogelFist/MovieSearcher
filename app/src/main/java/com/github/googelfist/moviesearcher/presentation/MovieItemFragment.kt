@@ -55,6 +55,7 @@ class MovieItemFragment : Fragment() {
         setOnSwipeListener()
         setupToolbar()
         observeViewModel(view)
+        setupButtons(movieId)
         mainViewModel.onRefreshItem(movieId)
     }
 
@@ -98,18 +99,21 @@ class MovieItemFragment : Fragment() {
                         scrollViewMovieItem.visibility = View.GONE
                         toolBarFragmentItemMovie.visibility = View.GONE
                         txtNoItem.visibility = View.VISIBLE
+                        refreshButtonMovieItem.visibility = View.VISIBLE
                     }
                     is MovieItemState.UpdatingState -> {
                         progressBarFragmentItem.visibility = View.VISIBLE
                         scrollViewMovieItem.visibility = View.GONE
                         toolBarFragmentItemMovie.visibility = View.GONE
                         txtNoItem.visibility = View.GONE
+                        refreshButtonMovieItem.visibility = View.GONE
                     }
-                    is MovieItemState.UpdatedState -> {
+                    is MovieItemState.SuccessState -> {
                         progressBarFragmentItem.visibility = View.GONE
                         scrollViewMovieItem.visibility = View.VISIBLE
                         toolBarFragmentItemMovie.visibility = View.VISIBLE
                         txtNoItem.visibility = View.GONE
+                        refreshButtonMovieItem.visibility = View.GONE
                     }
                     is MovieItemState.ErrorState -> {
                         Snackbar.make(view, state.message, Snackbar.LENGTH_SHORT).show()
@@ -143,6 +147,10 @@ class MovieItemFragment : Fragment() {
             webIntent.data = Uri.parse(url)
             startActivity(webIntent)
         }
+    }
+
+    private fun setupButtons(movieId: Int) {
+        binding.refreshButtonMovieItem.setOnClickListener { mainViewModel.onRefreshItem(movieId) }
     }
 
     companion object {

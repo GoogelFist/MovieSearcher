@@ -78,6 +78,7 @@ class MainViewModel(
                 _listState.value = MovieListState.NoListState
             } else {
                 _movieList.value = movieList
+                _listState.value = MovieListState.SuccessState
             }
         }
     }
@@ -87,7 +88,7 @@ class MainViewModel(
             try {
                 _listState.value = MovieListState.UpdatingState
                 block()
-                _listState.value = MovieListState.UpdatedState
+                _listState.value = MovieListState.SuccessState
             } catch (error: Throwable) {
                 when (error) {
                     is RemoteLoadMovieListError, is RemoteLoadPageCountError -> {
@@ -109,6 +110,7 @@ class MainViewModel(
                 _itemState.value = MovieItemState.NoItemState
             } else {
                 _movieItem.value = movieItem
+                _itemState.value = MovieItemState.SuccessState
             }
         }
     }
@@ -118,7 +120,7 @@ class MainViewModel(
             try {
                 _itemState.value = MovieItemState.UpdatingState
                 block()
-                _itemState.value = MovieItemState.UpdatedState
+                _itemState.value = MovieItemState.SuccessState
             } catch (error: Throwable) {
                 if (error is RemoteLoadMovieItemError) {
                     _itemState.value = MovieItemState.ErrorState(UPDATE_MOVIE_ITEM_ERROR_MESSAGE)

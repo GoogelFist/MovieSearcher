@@ -94,7 +94,7 @@ class MovieListFragment : Fragment() {
                         toolBarFragmentList.visibility = View.GONE
                         refreshButtonMovieList.visibility = View.GONE
                     }
-                    is MovieListState.UpdatedState -> {
+                    is MovieListState.SuccessState -> {
                         progressBarFragmentList.visibility = View.GONE
                         floatingActionButtonUpList.visibility = View.VISIBLE
                         txtEmptyList.visibility = View.GONE

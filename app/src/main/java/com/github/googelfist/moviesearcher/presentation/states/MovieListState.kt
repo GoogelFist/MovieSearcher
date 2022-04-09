@@ -5,5 +5,5 @@ sealed class MovieListState {
     class ErrorState(val message: String): MovieListState()
 
     object UpdatingState : MovieListState()
-    object UpdatedState : MovieListState()
+    object SuccessState : MovieListState()
 }
