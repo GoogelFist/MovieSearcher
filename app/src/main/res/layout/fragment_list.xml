@@ -12,23 +12,23 @@
             android:background="?attr/colorOnPrimary"
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textStyle="bold"
                 android:layout_gravity="center"
-                android:text="@string/fragment_list_toolbar_title" />
+                android:text="@string/fragment_list_toolbar_title"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
     </com.google.android.material.appbar.MaterialToolbar>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh_layout"
+            android:id="@+id/swipe_refresh_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -44,6 +44,17 @@
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <TextView
+            android:id="@+id/txt_empty_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txt_empty_list"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Movie List is empty" />
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -62,6 +73,7 @@
             android:id="@+id/pb_fragment_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
