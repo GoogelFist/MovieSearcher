@@ -93,6 +93,9 @@ class MainViewModel(
             } catch (error: Throwable) {
                 when (error) {
                     is RemoteLoadMovieListError, is RemoteLoadPageCountError -> {
+                        _listState.value = MovieListState.ErrorState(UPDATE_MOVIE_LIST_ERROR_MESSAGE)
+                    }
+                    else -> {
                         _listState.value = MovieListState.ErrorState(error.message.toString())
                     }
                 }
@@ -120,9 +123,18 @@ class MainViewModel(
                 _itemState.value = MovieItemState.UpdatingState
                 block()
                 _itemState.value = MovieItemState.UpdatedState
-            } catch (error: RemoteLoadMovieItemError) {
-                _itemState.value = MovieItemState.ErrorState(error.message.toString())
+            } catch (error: Throwable) {
+                if (error is RemoteLoadMovieItemError) {
+                    _itemState.value = MovieItemState.ErrorState(UPDATE_MOVIE_ITEM_ERROR_MESSAGE)
+                } else {
+                    _itemState.value = MovieItemState.ErrorState(error.message.toString())
+                }
             }
         }
+    }
+
+    companion object {
+        private const val UPDATE_MOVIE_LIST_ERROR_MESSAGE = "Unable to load movie list"
+        private const val UPDATE_MOVIE_ITEM_ERROR_MESSAGE = "Unable to load movie item"
     }
 }
