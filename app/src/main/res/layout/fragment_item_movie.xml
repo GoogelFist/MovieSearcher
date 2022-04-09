@@ -6,7 +6,7 @@
         android:layout_height="match_parent">
 
     <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/tb_fragment_item_movie"
+            android:id="@+id/tool_bar_fragment_item_movie"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorOnPrimary"
@@ -18,7 +18,7 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
         <ImageButton
-                android:id="@+id/ib_fragment_item_web_intent"
+                android:id="@+id/image_button_fragment_item_web_intent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
@@ -45,7 +45,7 @@
             tools:text="Movie movie item is absent" />
 
     <ProgressBar
-            android:id="@+id/pb_fragment_item"
+            android:id="@+id/progress_bar_fragment_item"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
@@ -55,7 +55,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
-            android:id="@+id/sv_movie_item"
+            android:id="@+id/scroll_view_movie_item"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="vertical"
@@ -63,7 +63,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tb_fragment_item_movie">
+            app:layout_constraintTop_toBottomOf="@+id/tool_bar_fragment_item_movie">
 
         <include
                 android:id="@+id/include_item_movie_info"

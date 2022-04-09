@@ -73,7 +73,7 @@ class MovieItemFragment : Fragment() {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setOnSwipeListener() {
-        binding.svMovieItem.setOnTouchListener(object : OnSwipeTouchListener(requireActivity()) {
+        binding.scrollViewMovieItem.setOnTouchListener(object : OnSwipeTouchListener(requireActivity()) {
             override fun onSwipeRight() {
                 requireActivity().supportFragmentManager.popBackStack()
             }
@@ -82,8 +82,8 @@ class MovieItemFragment : Fragment() {
 
     private fun setupToolbar() {
         with(binding) {
-            tbFragmentItemMovie.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
-            tbFragmentItemMovie.setNavigationOnClickListener {
+            toolBarFragmentItemMovie.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+            toolBarFragmentItemMovie.setNavigationOnClickListener {
                 requireActivity().supportFragmentManager.popBackStack()
             }
         }
@@ -94,21 +94,21 @@ class MovieItemFragment : Fragment() {
             with(binding) {
                 when (state) {
                     is MovieItemState.NoItemState -> {
-                        pbFragmentItem.visibility = View.GONE
-                        svMovieItem.visibility = View.GONE
-                        tbFragmentItemMovie.visibility = View.GONE
+                        progressBarFragmentItem.visibility = View.GONE
+                        scrollViewMovieItem.visibility = View.GONE
+                        toolBarFragmentItemMovie.visibility = View.GONE
                         txtNoItem.visibility = View.VISIBLE
                     }
                     is MovieItemState.UpdatingState -> {
-                        pbFragmentItem.visibility = View.VISIBLE
-                        svMovieItem.visibility = View.GONE
-                        tbFragmentItemMovie.visibility = View.GONE
+                        progressBarFragmentItem.visibility = View.VISIBLE
+                        scrollViewMovieItem.visibility = View.GONE
+                        toolBarFragmentItemMovie.visibility = View.GONE
                         txtNoItem.visibility = View.GONE
                     }
                     is MovieItemState.UpdatedState -> {
-                        pbFragmentItem.visibility = View.GONE
-                        svMovieItem.visibility = View.VISIBLE
-                        tbFragmentItemMovie.visibility = View.VISIBLE
+                        progressBarFragmentItem.visibility = View.GONE
+                        scrollViewMovieItem.visibility = View.VISIBLE
+                        toolBarFragmentItemMovie.visibility = View.VISIBLE
                         txtNoItem.visibility = View.GONE
                     }
                     is MovieItemState.ErrorState -> {
@@ -138,7 +138,7 @@ class MovieItemFragment : Fragment() {
     }
 
     private fun setupWebIntent(url: String) {
-        binding.ibFragmentItemWebIntent.setOnClickListener {
+        binding.imageButtonFragmentItemWebIntent.setOnClickListener {
             val webIntent = Intent(Intent.ACTION_VIEW)
             webIntent.data = Uri.parse(url)
             startActivity(webIntent)
