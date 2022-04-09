@@ -61,7 +61,7 @@ class MovieListFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        val rvMoviesPreview = binding.rvMoviesList
+        val rvMoviesPreview = binding.recyclerViewMoviesList
 
         linearLayoutManager = LinearLayoutManager(requireActivity())
         rvMoviesPreview.layoutManager = linearLayoutManager
@@ -79,28 +79,28 @@ class MovieListFragment : Fragment() {
             with(binding) {
                 when (state) {
                     is MovieListState.NoListState -> {
-                        pbFragmentList.visibility = View.GONE
-                        fabUpList.visibility = View.GONE
+                        progressBarFragmentList.visibility = View.GONE
+                        floatingActionButtonUpList.visibility = View.GONE
                         txtEmptyList.visibility = View.VISIBLE
-                        rvMoviesList.visibility = View.GONE
-                        tbFragmentList.visibility = View.GONE
+                        recyclerViewMoviesList.visibility = View.GONE
+                        toolBarFragmentList.visibility = View.GONE
                     }
                     is MovieListState.UpdatingState -> {
-                        pbFragmentList.visibility = View.VISIBLE
-                        fabUpList.visibility = View.GONE
+                        progressBarFragmentList.visibility = View.VISIBLE
+                        floatingActionButtonUpList.visibility = View.GONE
                         txtEmptyList.visibility = View.GONE
-                        rvMoviesList.visibility = View.GONE
-                        tbFragmentList.visibility = View.GONE
+                        recyclerViewMoviesList.visibility = View.GONE
+                        toolBarFragmentList.visibility = View.GONE
                     }
                     is MovieListState.UpdatedState -> {
-                        pbFragmentList.visibility = View.GONE
-                        fabUpList.visibility = View.VISIBLE
+                        progressBarFragmentList.visibility = View.GONE
+                        floatingActionButtonUpList.visibility = View.VISIBLE
                         txtEmptyList.visibility = View.GONE
-                        rvMoviesList.visibility = View.VISIBLE
-                        tbFragmentList.visibility = View.VISIBLE
+                        recyclerViewMoviesList.visibility = View.VISIBLE
+                        toolBarFragmentList.visibility = View.VISIBLE
                     }
                     is MovieListState.ErrorState -> {
-                        pbFragmentList.visibility = View.GONE
+                        progressBarFragmentList.visibility = View.GONE
                         Snackbar.make(view, state.message, Snackbar.LENGTH_SHORT).show()
                     }
                     else -> {
@@ -134,7 +134,7 @@ class MovieListFragment : Fragment() {
     }
 
     private fun setupButtons() {
-        binding.fabUpList.setOnClickListener {
+        binding.floatingActionButtonUpList.setOnClickListener {
             linearLayoutManager.scrollToPosition(SCROLL_TO_POSITION_VALUE)
         }
     }
