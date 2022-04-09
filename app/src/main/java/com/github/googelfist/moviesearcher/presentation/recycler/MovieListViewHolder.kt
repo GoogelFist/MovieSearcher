@@ -8,7 +8,7 @@ import com.github.googelfist.moviesearcher.R
 import com.github.googelfist.moviesearcher.domain.model.MovieList
 import com.squareup.picasso.Picasso
 
-class MoviesPreviewViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class MovieListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val imagePreview: ImageView = view.findViewById(R.id.iv_item_movie_image)
     private val name: TextView = view.findViewById(R.id.tv_list_movie_name)
     private val number: TextView = view.findViewById(R.id.tv_list_number)
