@@ -14,13 +14,15 @@ import com.github.googelfist.moviesearcher.component
 import com.github.googelfist.moviesearcher.databinding.FragmentListBinding
 import com.github.googelfist.moviesearcher.presentation.recycler.MovieListAdapter
 import com.github.googelfist.moviesearcher.presentation.states.MovieListState
+import com.github.googelfist.moviesearcher.presentation.viewmodel.ViewModelMovieList
+import com.github.googelfist.moviesearcher.presentation.viewmodel.ViewModelMovieListFabric
 import com.google.android.material.snackbar.Snackbar
 import javax.inject.Inject
 
 class MovieListFragment : Fragment() {
 
     @Inject
-    lateinit var mainViewModelFabric: MainViewModelFabric
+    lateinit var viewModelMovieListFabric: ViewModelMovieListFabric
 
     lateinit var movieListAdapter: MovieListAdapter
     lateinit var linearLayoutManager: LinearLayoutManager
@@ -29,7 +31,9 @@ class MovieListFragment : Fragment() {
     private val binding: FragmentListBinding
         get() = _binding!!
 
-    private val mainViewModel by activityViewModels<MainViewModel> { mainViewModelFabric }
+    private val viewModelMovieList by activityViewModels<ViewModelMovieList> {
+        viewModelMovieListFabric
+    }
 
     override fun onAttach(context: Context) {
         context.component.inject(this)
@@ -70,12 +74,12 @@ class MovieListFragment : Fragment() {
         rvMoviesPreview.adapter = movieListAdapter
 
         movieListAdapter.onScrolledToBottomListener = {
-            mainViewModel.onRefreshList()
+            viewModelMovieList.onRefreshList()
         }
     }
 
     private fun observeViewModel(view: View) {
-        mainViewModel.movieListState.observe(viewLifecycleOwner) { state ->
+        viewModelMovieList.movieListState.observe(viewLifecycleOwner) { state ->
             with(binding) {
                 when (state) {
                     is MovieListState.NoListState -> {
@@ -113,7 +117,7 @@ class MovieListFragment : Fragment() {
             }
         }
 
-        mainViewModel.movieList.observe(viewLifecycleOwner) { movieListAdapter.submitList(it) }
+        viewModelMovieList.movieList.observe(viewLifecycleOwner) { movieListAdapter.submitList(it) }
     }
 
     private fun setMoviePreviewOnClickListener() {
@@ -142,7 +146,7 @@ class MovieListFragment : Fragment() {
                 linearLayoutManager.scrollToPosition(SCROLL_TO_POSITION_VALUE)
             }
             refreshButtonMovieList.setOnClickListener {
-                mainViewModel.onRefreshList()
+                viewModelMovieList.onRefreshList()
             }
         }
     }
@@ -150,7 +154,7 @@ class MovieListFragment : Fragment() {
     private fun setupSwipeRefreshLayout(view: View) {
         with(binding) {
             swipeRefreshLayout.setOnRefreshListener {
-                mainViewModel.onRefreshList()
+                viewModelMovieList.onRefreshList()
                 Snackbar.make(view, UPDATED_MESSAGE, Snackbar.LENGTH_SHORT).show()
                 swipeRefreshLayout.isRefreshing = false
             }

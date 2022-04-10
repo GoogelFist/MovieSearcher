@@ -14,6 +14,8 @@ import com.github.googelfist.moviesearcher.R
 import com.github.googelfist.moviesearcher.component
 import com.github.googelfist.moviesearcher.databinding.FragmentItemMovieBinding
 import com.github.googelfist.moviesearcher.presentation.states.MovieItemState
+import com.github.googelfist.moviesearcher.presentation.viewmodel.ViewModelMovieItem
+import com.github.googelfist.moviesearcher.presentation.viewmodel.ViewModelMovieItemFabric
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 import javax.inject.Inject
@@ -21,13 +23,15 @@ import javax.inject.Inject
 class MovieItemFragment : Fragment() {
 
     @Inject
-    lateinit var mainViewModelFabric: MainViewModelFabric
+    lateinit var viewModelMovieItemFabric: ViewModelMovieItemFabric
 
     private var _binding: FragmentItemMovieBinding? = null
     private val binding: FragmentItemMovieBinding
         get() = _binding!!
 
-    private val mainViewModel by activityViewModels<MainViewModel> { mainViewModelFabric }
+    private val viewModelMovieItem by activityViewModels<ViewModelMovieItem> {
+        viewModelMovieItemFabric
+    }
 
     private var movieId = DEFAULT_MOVIE_ID
 
@@ -56,7 +60,7 @@ class MovieItemFragment : Fragment() {
         setupToolbar()
         observeViewModel(view)
         setupButtons(movieId)
-        mainViewModel.onRefreshItem(movieId)
+        viewModelMovieItem.onRefreshItem(movieId)
     }
 
     override fun onDestroy() {
@@ -74,7 +78,8 @@ class MovieItemFragment : Fragment() {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setOnSwipeListener() {
-        binding.scrollViewMovieItem.setOnTouchListener(object : OnSwipeTouchListener(requireActivity()) {
+        binding.scrollViewMovieItem.setOnTouchListener(object :
+            OnSwipeTouchListener(requireActivity()) {
             override fun onSwipeRight() {
                 requireActivity().supportFragmentManager.popBackStack()
             }
@@ -91,7 +96,7 @@ class MovieItemFragment : Fragment() {
     }
 
     private fun observeViewModel(view: View) {
-        mainViewModel.movieItemState.observe(viewLifecycleOwner) { state ->
+        viewModelMovieItem.movieItemState.observe(viewLifecycleOwner) { state ->
             with(binding) {
                 when (state) {
                     is MovieItemState.NoItemState -> {
@@ -125,7 +130,7 @@ class MovieItemFragment : Fragment() {
             }
         }
 
-        mainViewModel.movieItem.observe(viewLifecycleOwner) {
+        viewModelMovieItem.movieItem.observe(viewLifecycleOwner) {
             it?.let {
                 with(binding.includeItemMovieInfo) {
                     Picasso.get().load(it.posterUrl).into(ivItemMovieImage)
@@ -150,7 +155,9 @@ class MovieItemFragment : Fragment() {
     }
 
     private fun setupButtons(movieId: Int) {
-        binding.refreshButtonMovieItem.setOnClickListener { mainViewModel.onRefreshItem(movieId) }
+        binding.refreshButtonMovieItem.setOnClickListener {
+            viewModelMovieItem.onRefreshItem(movieId)
+        }
     }
 
     companion object {
