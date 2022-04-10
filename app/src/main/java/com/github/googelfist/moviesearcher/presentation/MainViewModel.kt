@@ -43,7 +43,7 @@ class MainViewModel(
 
 
     init {
-        onRefreshList()
+        initMovieList()
     }
 
     fun onRefreshList() {
@@ -70,6 +70,19 @@ class MainViewModel(
         }
     }
 
+    private fun initMovieList() {
+        viewModelScope.launch {
+            val movieList = loadMovieListUseCase()
+            if (movieList.isEmpty()) {
+                onRefreshList()
+            } else {
+                launchLoadMovieList {
+                    loadMovieListUseCase()
+                }
+            }
+        }
+    }
+
     private fun launchLoadMovieList(block: suspend () -> List<MovieList>): Job {
         return viewModelScope.launch {
             val movieList = block()
@@ -92,7 +105,8 @@ class MainViewModel(
             } catch (error: Throwable) {
                 when (error) {
                     is RemoteLoadMovieListError, is RemoteLoadPageCountError -> {
-                        _listState.value = MovieListState.ErrorState(UPDATE_MOVIE_LIST_ERROR_MESSAGE)
+                        _listState.value =
+                            MovieListState.ErrorState(UPDATE_MOVIE_LIST_ERROR_MESSAGE)
                     }
                     else -> {
                         _listState.value = MovieListState.ErrorState(error.message.toString())
