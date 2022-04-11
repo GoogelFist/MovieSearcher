@@ -9,4 +9,7 @@
     <string name="tv_item_movie_rating">Rating:</string>
     <string name="fragment_list_toolbar_title">Top 250 best films</string>
     <string name="button_web_intent_description">Open movie url</string>
+    <string name="txt_empty_list">Movie List is empty, try again.</string>
+    <string name="txt_no_item">Movie item is absent, try again.</string>
+    <string name="refresh_button_text">Try again</string>
 </resources>

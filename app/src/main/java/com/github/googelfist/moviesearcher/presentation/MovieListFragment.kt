@@ -12,23 +12,28 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.googelfist.moviesearcher.R
 import com.github.googelfist.moviesearcher.component
 import com.github.googelfist.moviesearcher.databinding.FragmentListBinding
-import com.github.googelfist.moviesearcher.presentation.recycler.MoviesPreviewAdapter
+import com.github.googelfist.moviesearcher.presentation.recycler.MovieListAdapter
+import com.github.googelfist.moviesearcher.presentation.states.MovieListState
+import com.github.googelfist.moviesearcher.presentation.viewmodel.ViewModelMovieList
+import com.github.googelfist.moviesearcher.presentation.viewmodel.ViewModelMovieListFabric
 import com.google.android.material.snackbar.Snackbar
 import javax.inject.Inject
 
 class MovieListFragment : Fragment() {
 
     @Inject
-    lateinit var mainViewModelFabric: MainViewModelFabric
+    lateinit var viewModelMovieListFabric: ViewModelMovieListFabric
 
-    lateinit var moviesPreviewAdapter: MoviesPreviewAdapter
+    lateinit var movieListAdapter: MovieListAdapter
     lateinit var linearLayoutManager: LinearLayoutManager
 
     private var _binding: FragmentListBinding? = null
     private val binding: FragmentListBinding
         get() = _binding!!
 
-    private val mainViewModel by activityViewModels<MainViewModel> { mainViewModelFabric }
+    private val viewModelMovieList by activityViewModels<ViewModelMovieList> {
+        viewModelMovieListFabric
+    }
 
     override fun onAttach(context: Context) {
         context.component.inject(this)
@@ -48,7 +53,6 @@ class MovieListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
-        movieListInit()
         observeViewModel(view)
         setupSwipeRefreshLayout(view)
         setMoviePreviewOnClickListener()
@@ -61,49 +65,63 @@ class MovieListFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        val rvMoviesPreview = binding.rvMoviesList
+        val rvMoviesPreview = binding.recyclerViewMoviesList
 
         linearLayoutManager = LinearLayoutManager(requireActivity())
         rvMoviesPreview.layoutManager = linearLayoutManager
 
-        moviesPreviewAdapter = MoviesPreviewAdapter()
-        rvMoviesPreview.adapter = moviesPreviewAdapter
+        movieListAdapter = MovieListAdapter()
+        rvMoviesPreview.adapter = movieListAdapter
 
-        moviesPreviewAdapter.onScrolledToBottomListener = {
-            mainViewModel.onUpdateMovieList()
+        movieListAdapter.onScrolledToBottomListener = {
+            viewModelMovieList.onRefreshList()
         }
     }
 
     private fun observeViewModel(view: View) {
-        mainViewModel.movieList.observe(viewLifecycleOwner) {
-
-            if (it.isEmpty()) {
-                mainViewModel.onUpdateMovieList()
-            } else {
-                moviesPreviewAdapter.submitList(it)
+        viewModelMovieList.movieListState.observe(viewLifecycleOwner) { state ->
+            with(binding) {
+                when (state) {
+                    is MovieListState.NoListState -> {
+                        progressBarFragmentList.visibility = View.GONE
+                        floatingActionButtonUpList.visibility = View.GONE
+                        txtEmptyList.visibility = View.VISIBLE
+                        recyclerViewMoviesList.visibility = View.GONE
+                        toolBarFragmentList.visibility = View.GONE
+                        refreshButtonMovieList.visibility = View.VISIBLE
+                    }
+                    is MovieListState.UpdatingState -> {
+                        progressBarFragmentList.visibility = View.VISIBLE
+                        floatingActionButtonUpList.visibility = View.GONE
+                        txtEmptyList.visibility = View.GONE
+                        recyclerViewMoviesList.visibility = View.GONE
+                        toolBarFragmentList.visibility = View.GONE
+                        refreshButtonMovieList.visibility = View.GONE
+                    }
+                    is MovieListState.SuccessState -> {
+                        progressBarFragmentList.visibility = View.GONE
+                        floatingActionButtonUpList.visibility = View.VISIBLE
+                        txtEmptyList.visibility = View.GONE
+                        recyclerViewMoviesList.visibility = View.VISIBLE
+                        toolBarFragmentList.visibility = View.VISIBLE
+                        refreshButtonMovieList.visibility = View.GONE
+                    }
+                    is MovieListState.ErrorState -> {
+                        progressBarFragmentList.visibility = View.GONE
+                        Snackbar.make(view, state.message, Snackbar.LENGTH_SHORT).show()
+                    }
+                    else -> {
+                        throw RuntimeException("Unknown state")
+                    }
+                }
             }
         }
 
-        mainViewModel.loading.observe(viewLifecycleOwner) { value ->
-            value.let { show ->
-                binding.pbFragmentList.visibility = if (show) View.VISIBLE else View.GONE
-            }
-        }
-
-        mainViewModel.snackBar.observe(viewLifecycleOwner) {
-            it?.let {
-                Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show()
-                mainViewModel.onSnackBarShown()
-            }
-        }
-    }
-
-    private fun movieListInit() {
-        mainViewModel.onLoadMovieList()
+        viewModelMovieList.movieList.observe(viewLifecycleOwner) { movieListAdapter.submitList(it) }
     }
 
     private fun setMoviePreviewOnClickListener() {
-        moviesPreviewAdapter.onMovieItemClickListener = { _, kinopoiskId ->
+        movieListAdapter.onMovieItemClickListener = { _, kinopoiskId ->
 
             requireActivity().supportFragmentManager.commit {
                 setCustomAnimations(
@@ -123,16 +141,23 @@ class MovieListFragment : Fragment() {
     }
 
     private fun setupButtons() {
-        binding.fabUpList.setOnClickListener {
-            linearLayoutManager.scrollToPosition(SCROLL_TO_POSITION_VALUE)
+        with(binding) {
+            floatingActionButtonUpList.setOnClickListener {
+                linearLayoutManager.scrollToPosition(SCROLL_TO_POSITION_VALUE)
+            }
+            refreshButtonMovieList.setOnClickListener {
+                viewModelMovieList.onRefreshList()
+            }
         }
     }
 
     private fun setupSwipeRefreshLayout(view: View) {
-        binding.swipeRefreshLayout.setOnRefreshListener {
-            mainViewModel.onUpdateMovieList()
-            Snackbar.make(view, UPDATED_MESSAGE, Snackbar.LENGTH_SHORT).show()
-            binding.swipeRefreshLayout.isRefreshing = false
+        with(binding) {
+            swipeRefreshLayout.setOnRefreshListener {
+                viewModelMovieList.onRefreshList()
+                Snackbar.make(view, UPDATED_MESSAGE, Snackbar.LENGTH_SHORT).show()
+                swipeRefreshLayout.isRefreshing = false
+            }
         }
     }
 

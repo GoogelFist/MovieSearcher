@@ -1,6 +1,5 @@
 package com.github.googelfist.moviesearcher.data
 
-import androidx.lifecycle.LiveData
 import com.github.googelfist.moviesearcher.data.datasourse.LocalDataSource
 import com.github.googelfist.moviesearcher.data.datasourse.RemoteDataSource
 import com.github.googelfist.moviesearcher.domain.Repository
@@ -28,11 +27,11 @@ class RepositoryImp @Inject constructor(
         }
     }
 
-    override fun loadMovieList(): LiveData<List<MovieList>> {
+    override suspend fun loadMovieList(): List<MovieList> {
         return localDataSource.loadAllMovieLists()
     }
 
-    override fun loadMovieItem(id: Int): LiveData<MovieItem> {
+    override suspend fun loadMovieItem(id: Int): MovieItem? {
         return localDataSource.loadMovieItem(id)
     }
 
