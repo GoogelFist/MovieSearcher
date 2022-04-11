@@ -31,22 +31,14 @@ internal class ViewModelMovieListTest {
     fun setUp() {
 
         expectedMovieList = listOf(
-            MovieList(
-                1,
-                "Batman",
-                "Batman",
-                "some url"
-            )
+            MovieList(1, "Batman", "Batman", "some url")
         )
     }
 
     @AfterEach
     fun tearDown() {
 
-        Mockito.reset(
-            loadMovieListUseCase,
-            updateMovieListUseCase
-        )
+        Mockito.reset(loadMovieListUseCase, updateMovieListUseCase)
     }
 
     @Test
@@ -58,10 +50,7 @@ internal class ViewModelMovieListTest {
             Mockito.`when`(loadMovieListUseCase()).thenReturn(emptyList())
                 .thenReturn(expectedMovieList)
 
-            viewModelMovieList = ViewModelMovieList(
-                loadMovieListUseCase,
-                updateMovieListUseCase
-            )
+            viewModelMovieList = ViewModelMovieList(loadMovieListUseCase, updateMovieListUseCase)
 
             Mockito.verify(loadMovieListUseCase, times(TWO_TIMES_VALUE)).invoke()
             Mockito.verify(updateMovieListUseCase).invoke()
@@ -77,19 +66,16 @@ internal class ViewModelMovieListTest {
             Mockito.`when`(loadMovieListUseCase()).thenReturn(expectedMovieList)
             Mockito.`when`(updateMovieListUseCase()).thenReturn(Unit)
 
-            viewModelMovieList = ViewModelMovieList(
-                loadMovieListUseCase,
-                updateMovieListUseCase
-            )
+            viewModelMovieList = ViewModelMovieList(loadMovieListUseCase, updateMovieListUseCase)
 
-            Mockito.verify(loadMovieListUseCase, times(2)).invoke()
+            Mockito.verify(loadMovieListUseCase, times(TWO_TIMES_VALUE)).invoke()
             Mockito.verifyNoMoreInteractions(updateMovieListUseCase, loadMovieListUseCase)
         }
 
     @Test
     @ExperimentalCoroutinesApi
     @ExtendWith(InstantTaskExecutorExtension::class, CoroutinesTestExtension::class)
-    fun `should set correct state when onRefreshList() and no network and list no exist in base`() =
+    fun `should set correct state when onRefreshList() and network call is not Success and list no exist in base`() =
         runTest {
 
             val expectedErrorMessage = "Unable to load movie list"
@@ -98,10 +84,7 @@ internal class ViewModelMovieListTest {
             Mockito.`when`(updateMovieListUseCase()).thenAnswer { throw error }
             Mockito.`when`(loadMovieListUseCase()).thenReturn(emptyList())
 
-            viewModelMovieList = ViewModelMovieList(
-                loadMovieListUseCase,
-                updateMovieListUseCase
-            )
+            viewModelMovieList = ViewModelMovieList(loadMovieListUseCase, updateMovieListUseCase)
 
             viewModelMovieList.movieListState.captureValues {
                 Assertions.assertEquals(values, listOf(MovieListState.NoListState))
@@ -122,7 +105,7 @@ internal class ViewModelMovieListTest {
     @Test
     @ExperimentalCoroutinesApi
     @ExtendWith(InstantTaskExecutorExtension::class, CoroutinesTestExtension::class)
-    fun `should set correct state when onRefreshList() and no network and list exist in base`() =
+    fun `should set correct state when onRefreshList() and network call is not Success and list exist in base`() =
         runTest {
 
             val expectedErrorMessage = "Unable to load movie list"
@@ -131,10 +114,7 @@ internal class ViewModelMovieListTest {
             Mockito.`when`(updateMovieListUseCase()).thenAnswer { throw error }
             Mockito.`when`(loadMovieListUseCase()).thenReturn(expectedMovieList)
 
-            viewModelMovieList = ViewModelMovieList(
-                loadMovieListUseCase,
-                updateMovieListUseCase
-            )
+            viewModelMovieList = ViewModelMovieList(loadMovieListUseCase, updateMovieListUseCase)
 
             viewModelMovieList.movieListState.captureValues {
                 Assertions.assertEquals(values, listOf(MovieListState.SuccessState))
@@ -155,7 +135,7 @@ internal class ViewModelMovieListTest {
     @Test
     @ExperimentalCoroutinesApi
     @ExtendWith(InstantTaskExecutorExtension::class, CoroutinesTestExtension::class)
-    fun `should set correct movie list when onRefreshList() and no network and list exist in base`() =
+    fun `should set correct movie list when onRefreshList() and network call is not Success and list exist in base`() =
         runTest {
 
             val expectedErrorMessage = "Unable to load movie list"
@@ -164,10 +144,7 @@ internal class ViewModelMovieListTest {
             Mockito.`when`(updateMovieListUseCase()).thenAnswer { throw error }
             Mockito.`when`(loadMovieListUseCase()).thenReturn(expectedMovieList)
 
-            viewModelMovieList = ViewModelMovieList(
-                loadMovieListUseCase,
-                updateMovieListUseCase
-            )
+            viewModelMovieList = ViewModelMovieList(loadMovieListUseCase, updateMovieListUseCase)
 
             viewModelMovieList.movieList.captureValues {
                 Assertions.assertEquals(values, listOf(expectedMovieList))
@@ -181,17 +158,14 @@ internal class ViewModelMovieListTest {
     @Test
     @ExperimentalCoroutinesApi
     @ExtendWith(InstantTaskExecutorExtension::class, CoroutinesTestExtension::class)
-    fun `should set correct state when onRefreshList() and network is available and list no exist in base`() =
+    fun `should set correct state when onRefreshList() and network call is success and list no exist in base`() =
         runTest {
 
             Mockito.`when`(updateMovieListUseCase()).thenAnswer { Unit }
             Mockito.`when`(loadMovieListUseCase()).thenReturn(emptyList())
                 .thenReturn(expectedMovieList)
 
-            viewModelMovieList = ViewModelMovieList(
-                loadMovieListUseCase,
-                updateMovieListUseCase
-            )
+            viewModelMovieList = ViewModelMovieList(loadMovieListUseCase, updateMovieListUseCase)
 
             viewModelMovieList.movieListState.captureValues {
                 Assertions.assertEquals(values, listOf(MovieListState.SuccessState))
@@ -212,16 +186,13 @@ internal class ViewModelMovieListTest {
     @Test
     @ExperimentalCoroutinesApi
     @ExtendWith(InstantTaskExecutorExtension::class, CoroutinesTestExtension::class)
-    fun `should set correct state when onRefreshList() and network is available and list exist in base`() =
+    fun `should set correct state when onRefreshList() and network call is success and list exist in base`() =
         runTest {
 
             Mockito.`when`(updateMovieListUseCase()).thenAnswer { Unit }
             Mockito.`when`(loadMovieListUseCase()).thenReturn(expectedMovieList)
 
-            viewModelMovieList = ViewModelMovieList(
-                loadMovieListUseCase,
-                updateMovieListUseCase
-            )
+            viewModelMovieList = ViewModelMovieList(loadMovieListUseCase, updateMovieListUseCase)
 
             viewModelMovieList.movieListState.captureValues {
                 Assertions.assertEquals(values, listOf(MovieListState.SuccessState))
@@ -242,16 +213,13 @@ internal class ViewModelMovieListTest {
     @Test
     @ExperimentalCoroutinesApi
     @ExtendWith(InstantTaskExecutorExtension::class, CoroutinesTestExtension::class)
-    fun `should set correct movie list when onRefreshList() and network is available and list exist in base`() =
+    fun `should set correct movie list when onRefreshList() and network call is success and list exist in base`() =
         runTest {
 
             Mockito.`when`(updateMovieListUseCase()).thenAnswer { Unit }
             Mockito.`when`(loadMovieListUseCase()).thenReturn(expectedMovieList)
 
-            viewModelMovieList = ViewModelMovieList(
-                loadMovieListUseCase,
-                updateMovieListUseCase
-            )
+            viewModelMovieList = ViewModelMovieList(loadMovieListUseCase, updateMovieListUseCase)
 
             viewModelMovieList.movieList.captureValues {
                 Assertions.assertEquals(values, listOf(expectedMovieList))
@@ -265,17 +233,14 @@ internal class ViewModelMovieListTest {
     @Test
     @ExperimentalCoroutinesApi
     @ExtendWith(InstantTaskExecutorExtension::class, CoroutinesTestExtension::class)
-    fun `should set correct movie list when onRefreshList() and network is available and list not exist in base`() =
+    fun `should set correct movie list when onRefreshList() and network call is success and list not exist in base`() =
         runTest {
 
             Mockito.`when`(updateMovieListUseCase()).thenAnswer { Unit }
             Mockito.`when`(loadMovieListUseCase()).thenReturn(emptyList())
                 .thenReturn(expectedMovieList)
 
-            viewModelMovieList = ViewModelMovieList(
-                loadMovieListUseCase,
-                updateMovieListUseCase,
-            )
+            viewModelMovieList = ViewModelMovieList(loadMovieListUseCase, updateMovieListUseCase)
 
             viewModelMovieList.movieList.captureValues {
                 Assertions.assertEquals(values, listOf(expectedMovieList))
