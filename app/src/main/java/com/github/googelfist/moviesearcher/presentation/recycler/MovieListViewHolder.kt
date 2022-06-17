@@ -14,7 +14,14 @@ class MovieListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     private val number: TextView = view.findViewById(R.id.tv_list_number)
 
     fun bind(movie: MovieList, position: Int) {
-        Picasso.get().load(movie.posterUrl).into(this.imagePreview)
+
+        Picasso
+            .get()
+            .load(movie.posterUrl)
+            .resize(350, 500)
+            .centerCrop()
+            .into(this.imagePreview)
+
         name.text = movie.nameEn
 
         val numberOfPosition = position + ONE_VALUE

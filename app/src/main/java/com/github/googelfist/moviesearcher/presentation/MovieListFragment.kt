@@ -121,7 +121,7 @@ class MovieListFragment : Fragment() {
     }
 
     private fun setMoviePreviewOnClickListener() {
-        movieListAdapter.onMovieItemClickListener = { _, kinopoiskId ->
+        movieListAdapter.onMovieItemClickListener = { kinopoiskId ->
 
             requireActivity().supportFragmentManager.commit {
                 setCustomAnimations(
