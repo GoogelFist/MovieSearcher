@@ -4,9 +4,9 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.github.googelfist.moviesearcher.R
 import com.github.googelfist.moviesearcher.domain.model.MovieList
-import com.squareup.picasso.Picasso
 
 class MovieListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val imagePreview: ImageView = view.findViewById(R.id.iv_item_movie_image)
@@ -15,11 +15,10 @@ class MovieListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     fun bind(movie: MovieList, position: Int) {
 
-        Picasso
-            .get()
+        Glide.with(imagePreview.context)
             .load(movie.posterUrl)
-            .resize(350, 500)
             .centerCrop()
+            .placeholder(R.drawable.movie_list_item_background)
             .into(this.imagePreview)
 
         name.text = movie.nameEn

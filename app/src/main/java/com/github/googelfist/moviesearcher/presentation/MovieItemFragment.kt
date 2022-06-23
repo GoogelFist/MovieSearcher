@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.bumptech.glide.Glide
 import com.github.googelfist.moviesearcher.R
 import com.github.googelfist.moviesearcher.component
 import com.github.googelfist.moviesearcher.databinding.FragmentItemMovieBinding
@@ -17,7 +18,6 @@ import com.github.googelfist.moviesearcher.presentation.states.MovieItemState
 import com.github.googelfist.moviesearcher.presentation.viewmodel.ViewModelMovieItem
 import com.github.googelfist.moviesearcher.presentation.viewmodel.ViewModelMovieItemFabric
 import com.google.android.material.snackbar.Snackbar
-import com.squareup.picasso.Picasso
 import javax.inject.Inject
 
 class MovieItemFragment : Fragment() {
@@ -101,15 +101,15 @@ class MovieItemFragment : Fragment() {
                 when (state) {
                     is MovieItemState.NoItemState -> {
                         progressBarFragmentItem.visibility = View.GONE
-                        scrollViewMovieItem.visibility = View.GONE
-                        toolBarFragmentItemMovie.visibility = View.GONE
+                        scrollViewMovieItem.visibility = View.INVISIBLE
+                        toolBarFragmentItemMovie.visibility = View.INVISIBLE
                         txtNoItem.visibility = View.VISIBLE
                         refreshButtonMovieItem.visibility = View.VISIBLE
                     }
                     is MovieItemState.UpdatingState -> {
                         progressBarFragmentItem.visibility = View.VISIBLE
-                        scrollViewMovieItem.visibility = View.GONE
-                        toolBarFragmentItemMovie.visibility = View.GONE
+                        scrollViewMovieItem.visibility = View.INVISIBLE
+                        toolBarFragmentItemMovie.visibility = View.INVISIBLE
                         txtNoItem.visibility = View.GONE
                         refreshButtonMovieItem.visibility = View.GONE
                     }
@@ -133,7 +133,13 @@ class MovieItemFragment : Fragment() {
         viewModelMovieItem.movieItem.observe(viewLifecycleOwner) {
             it?.let {
                 with(binding.includeItemMovieInfo) {
-                    Picasso.get().load(it.posterUrl).into(ivItemMovieImage)
+
+                    Glide.with(requireActivity())
+                        .load(it.posterUrl)
+                        .placeholder(R.drawable.movie_list_item_background)
+                        .centerCrop()
+                        .into(itemMovieImage)
+
                     tvItemCountry.text = it.country
                     tvItemMovieName.text = it.nameOriginal
                     tvItemGenre.text = it.genre
