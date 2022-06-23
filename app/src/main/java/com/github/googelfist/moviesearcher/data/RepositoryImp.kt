@@ -5,6 +5,7 @@ import com.github.googelfist.moviesearcher.data.datasourse.RemoteDataSource
 import com.github.googelfist.moviesearcher.domain.Repository
 import com.github.googelfist.moviesearcher.domain.model.MovieItem
 import com.github.googelfist.moviesearcher.domain.model.MovieList
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -12,7 +13,8 @@ import javax.inject.Inject
 
 class RepositoryImp @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
-    private val localDataSource: LocalDataSource
+    private val localDataSource: LocalDataSource,
+    private val dispatcher: CoroutineDispatcher
 ) : Repository {
 
     override suspend fun updateMovieList() {
@@ -52,7 +54,7 @@ class RepositoryImp @Inject constructor(
     override suspend fun refreshLocalData(page: Int) {
         val remoteMovieList = remoteLoadMovieList(page)
         localSaveMovieList(page, remoteMovieList)
-        withContext(Dispatchers.IO) {
+        withContext(dispatcher) {
             for (item in remoteMovieList) {
                 val itemId = item.kinopoiskId
                 val remoteLoadMovieItem = remoteLoadMovieItem(itemId)

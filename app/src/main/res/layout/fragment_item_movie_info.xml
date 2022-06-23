@@ -10,31 +10,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:textSize="16sp"
+            android:gravity="center"
+            android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Avengers" />
 
-    <androidx.cardview.widget.CardView
-            android:id="@+id/cv_item_movie_image"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+    <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/item_movie_image"
+            android:layout_width="250dp"
+            android:layout_height="400dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="@id/tv_item_movie_name"
             app:layout_constraintStart_toStartOf="@+id/tv_item_movie_name"
-            app:layout_constraintTop_toBottomOf="@+id/tv_item_movie_name">
-
-        <ImageView
-                android:id="@+id/iv_item_movie_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/movie_list_image_description" />
-
-    </androidx.cardview.widget.CardView>
+            app:layout_constraintTop_toBottomOf="@+id/tv_item_movie_name"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize5Percent" />
 
     <TextView
             android:id="@+id/tv_genres"
@@ -46,7 +38,7 @@
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/tv_item_movie_name"
-            app:layout_constraintTop_toBottomOf="@+id/cv_item_movie_image" />
+            app:layout_constraintTop_toBottomOf="@+id/item_movie_image" />
 
     <TextView
             android:id="@+id/tv_item_genre"
@@ -132,8 +124,9 @@
     <TextView
             android:id="@+id/tv_item_description"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_margin="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/tv_item_movie_name"
             app:layout_constraintTop_toBottomOf="@+id/tv_rating"
