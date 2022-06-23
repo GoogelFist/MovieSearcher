@@ -54,6 +54,7 @@ class ViewModelMovieItem(
     private fun launchUpdateMovieItem(block: suspend () -> Unit): Job {
         return viewModelScope.launch {
             try {
+                _movieItem.value = null
                 _movieItemState.value = MovieItemState.UpdatingState
                 block()
                 _movieItemState.value = MovieItemState.SuccessState
